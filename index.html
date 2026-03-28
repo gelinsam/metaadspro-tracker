@@ -1,1132 +1,992 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MetaAdsPro Â· Sam Gelin Event Portfolio Tracker</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: #030712;
-            color: #E5E7EB;
-            line-height: 1.6;
-            overflow-x: hidden;
-        }
-
-        .header {
-            background: linear-gradient(135deg, #1F2937 0%, #111827 100%);
-            border-bottom: 1px solid #1F2937;
-            padding: 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
-
-        .logo-section {
-            display: flex;
-            align-items: center;
-            gap: 1.5rem;
-        }
-
-        .logo {
-            background: linear-gradient(135deg, #3B82F6 0%, #8B5CF6 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            font-size: 1.8rem;
-            font-weight: 700;
-            letter-spacing: -0.5px;
-        }
-
-        .logo-subtitle {
-            font-size: 0.85rem;
-            color: #9CA3AF;
-            font-weight: 500;
-        }
-
-        .header-right {
-            display: flex;
-            align-items: center;
-            gap: 2rem;
-            font-size: 0.9rem;
-        }
-
-        .header-stat {
-            display: flex;
-            flex-direction: column;
-            gap: 0.25rem;
-        }
-
-        .header-stat-label {
-            color: #6B7280;
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .header-stat-value {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: #3B82F6;
-        }
-
-        .metrics-bar {
-            background-color: #111827;
-            border-bottom: 1px solid #1F2937;
-            padding: 1.5rem 2rem;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1.5rem;
-        }
-
-        .metric-card {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-
-        .metric-label {
-            color: #9CA3AF;
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .metric-value {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 1.5rem;
-            font-weight: 600;
-            background: linear-gradient(135deg, #3B82F6 0%, #8B5CF6 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .tabs {
-            background-color: #111827;
-            border-bottom: 1px solid #1F2937;
-            padding: 0 2rem;
-            display: flex;
-            gap: 0;
-        }
-
-        .tab-button {
-            flex: 1;
-            max-width: 300px;
-            padding: 1rem 1.5rem;
-            border: none;
-            background: transparent;
-            color: #9CA3AF;
-            font-size: 0.95rem;
-            font-weight: 500;
-            cursor: pointer;
-            border-bottom: 2px solid transparent;
-            transition: all 0.3s ease;
-            font-family: 'Poppins', sans-serif;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            font-size: 0.85rem;
-        }
-
-        .tab-button:hover {
-            color: #3B82F6;
-        }
-
-        .tab-button.active {
-            color: #3B82F6;
-            border-bottom-color: #3B82F6;
-        }
-
-        .content {
-            padding: 2rem;
-        }
-
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-            animation: fadeIn 0.3s ease;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        .event-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .event-card {
-            background-color: #111827;
-            border: 1px solid #1F2937;
-            border-radius: 0.75rem;
-            padding: 1.5rem;
-            transition: all 0.3s ease;
-        }
-
-        .event-card:hover {
-            border-color: #3B82F6;
-            box-shadow: 0 8px 16px rgba(59, 130, 246, 0.1);
-        }
-
-        .event-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 1rem;
-        }
-
-        .event-name {
-            font-weight: 600;
-            font-size: 1.05rem;
-            color: #F3F4F6;
-        }
-
-        .event-health {
-            padding: 0.5rem 0.75rem;
-            border-radius: 0.5rem;
-            font-size: 0.75rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .health-hot {
-            background-color: rgba(220, 38, 38, 0.15);
-            color: #FCA5A5;
-        }
-
-        .health-good {
-            background-color: rgba(5, 150, 105, 0.15);
-            color: #86EFAC;
-        }
-
-        .health-warm {
-            background-color: rgba(251, 146, 60, 0.15);
-            color: #FDBA74;
-        }
-
-        .event-details {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 0.75rem;
-            font-size: 0.9rem;
-            margin: 1rem 0;
-        }
-
-        .event-detail {
-            display: flex;
-            flex-direction: column;
-            gap: 0.25rem;
-        }
-
-        .event-detail-label {
-            color: #6B7280;
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .event-detail-value {
-            font-family: 'JetBrains Mono', monospace;
-            font-weight: 600;
-            color: #F3F4F6;
-        }
-
-        .event-progress {
-            margin-top: 1rem;
-        }
-
-        .progress-label {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.8rem;
-            color: #9CA3AF;
-            margin-bottom: 0.5rem;
-        }
-
-        .progress-bar {
-            width: 100%;
-            height: 6px;
-            background-color: #1F2937;
-            border-radius: 3px;
-            overflow: hidden;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #3B82F6 0%, #8B5CF6 100%);
-            border-radius: 3px;
-            transition: width 0.3s ease;
-        }
-
-        .campaign-table-wrapper {
-            background-color: #111827;
-            border: 1px solid #1F2937;
-            border-radius: 0.75rem;
-            overflow: hidden;
-        }
-
-        .campaign-controls {
-            padding: 1.5rem;
-            border-bottom: 1px solid #1F2937;
-            display: flex;
-            gap: 1rem;
-            flex-wrap: wrap;
-            align-items: center;
-        }
-
-        .control-group {
-            display: flex;
-            gap: 0.5rem;
-            align-items: center;
-        }
-
-        .control-label {
-            color: #9CA3AF;
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        select, input[type="text"] {
-            background-color: #1F2937;
-            border: 1px solid #374151;
-            border-radius: 0.5rem;
-            color: #E5E7EB;
-            padding: 0.5rem 0.75rem;
-            font-family: 'Poppins', sans-serif;
-            font-size: 0.9rem;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        select:hover, input[type="text"]:hover {
-            border-color: #3B82F6;
-        }
-
-        select:focus, input[type="text"]:focus {
-            outline: none;
-            border-color: #3B82F6;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-        }
-
-        button {
-            background: linear-gradient(135deg, #3B82F6 0%, #8B5CF6 100%);
-            border: none;
-            color: white;
-            padding: 0.5rem 1rem;
-            border-radius: 0.5rem;
-            font-family: 'Poppins', sans-serif;
-            font-size: 0.85rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 16px rgba(59, 130, 246, 0.3);
-        }
-
-        .campaign-table {
-            width: 100%;
-            border-collapse: collapse;
-            overflow-x: auto;
-        }
-
-        .campaign-table th {
-            background-color: #1F2937;
-            padding: 1rem;
-            text-align: left;
-            font-weight: 600;
-            color: #9CA3AF;
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            border-bottom: 1px solid #374151;
-            cursor: pointer;
-            user-select: none;
-            transition: all 0.2s ease;
-        }
-
-        .campaign-table th:hover {
-            background-color: #374151;
-            color: #3B82F6;
-        }
-
-        .campaign-table td {
-            padding: 1rem;
-            border-bottom: 1px solid #1F2937;
-            font-size: 0.9rem;
-        }
-
-        .campaign-table tbody tr {
-            transition: all 0.2s ease;
-        }
-
-        .campaign-table tbody tr:hover {
-            background-color: #1F2937;
-            cursor: pointer;
-        }
-
-        .campaign-row-scale {
-            border-left: 3px solid #059669;
-        }
-
-        .campaign-row-kill {
-            border-left: 3px solid #DC2626;
-        }
-
-        .campaign-row-hold {
-            border-left: 3px solid #6B7280;
-        }
-
-        .badge {
-            display: inline-block;
-            padding: 0.35rem 0.65rem;
-            border-radius: 0.4rem;
-            font-size: 0.75rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .badge-scale {
-            background-color: rgba(5, 150, 105, 0.15);
-            color: #86EFAC;
-        }
-
-        .badge-kill {
-            background-color: rgba(220, 38, 38, 0.15);
-            color: #FCA5A5;
-        }
-
-        .badge-hold {
-            background-color: rgba(107, 114, 128, 0.15);
-            color: #D1D5DB;
-        }
-
-        .numeric {
-            font-family: 'JetBrains Mono', monospace;
-            font-weight: 500;
-        }
-
-        .matrix-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-
-        .matrix-campaign {
-            padding: 1rem;
-            border-radius: 0.5rem;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            min-height: 100px;
-            font-size: 0.75rem;
-            text-align: center;
-            font-weight: 500;
-        }
-
-        .matrix-campaign:hover {
-            transform: scale(1.05);
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
-        }
-
-        .matrix-scale {
-            background-color: rgba(5, 150, 105, 0.2);
-            border: 1px solid #059669;
-            color: #86EFAC;
-        }
-
-        .matrix-kill {
-            background-color: rgba(220, 38, 38, 0.2);
-            border: 1px solid #DC2626;
-            color: #FCA5A5;
-        }
-
-        .matrix-hold {
-            background-color: rgba(107, 114, 128, 0.2);
-            border: 1px solid #6B7280;
-            color: #D1D5DB;
-        }
-
-        .matrix-group-title {
-            font-size: 1rem;
-            font-weight: 600;
-            color: #3B82F6;
-            margin-top: 2rem;
-            margin-bottom: 1rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 1px solid #1F2937;
-        }
-
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.7);
-            animation: fadeIn 0.3s ease;
-        }
-
-        .modal.show {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal-content {
-            background-color: #111827;
-            border: 1px solid #1F2937;
-            border-radius: 0.75rem;
-            padding: 2rem;
-            max-width: 600px;
-            width: 90%;
-            max-height: 80vh;
-            overflow-y: auto;
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-        }
-
-        .modal-title {
-            font-size: 1.3rem;
-            font-weight: 600;
-            color: #F3F4F6;
-        }
-
-        .modal-close {
-            background: transparent;
-            color: #9CA3AF;
-            font-size: 1.5rem;
-            cursor: pointer;
-            border: none;
-            padding: 0;
-            width: 32px;
-            height: 32px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s ease;
-        }
-
-        .modal-close:hover {
-            color: #3B82F6;
-        }
-
-        .modal-detail-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .modal-detail-item {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-
-        .modal-detail-label {
-            color: #6B7280;
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .modal-detail-value {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: #F3F4F6;
-        }
-
-        .recommendation {
-            padding: 1rem;
-            border-radius: 0.5rem;
-            margin-top: 1rem;
-            font-weight: 500;
-        }
-
-        .recommendation.scale {
-            background-color: rgba(5, 150, 105, 0.15);
-            color: #86EFAC;
-            border: 1px solid #059669;
-        }
-
-        .recommendation.kill {
-            background-color: rgba(220, 38, 38, 0.15);
-            color: #FCA5A5;
-            border: 1px solid #DC2626;
-        }
-
-        .recommendation.hold {
-            background-color: rgba(107, 114, 128, 0.15);
-            color: #D1D5DB;
-            border: 1px solid #6B7280;
-        }
-
-        .spacer {
-            margin-bottom: 2rem;
-        }
-
-        @media (max-width: 1024px) {
-            .header {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            .header-right {
-                width: 100%;
-                flex-wrap: wrap;
-            }
-
-            .metrics-bar {
-                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            }
-
-            .modal-detail-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .export-btn {
-            background: linear-gradient(135deg, #8B5CF6 0%, #3B82F6 100%);
-        }
-
-        .no-data {
-            text-align: center;
-            padding: 3rem;
-            color: #6B7280;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MetaAdsPro &middot; Craft Hospitality Campaign Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+--bg:#030712;--card:#111827;--border:#1F2937;--border-light:#374151;
+--text:#F9FAFB;--text-muted:#9CA3AF;--text-dim:#6B7280;
+--green:#22C55E;--green-bg:rgba(34,197,94,.12);--green-border:rgba(34,197,94,.3);
+--red:#EF4444;--red-bg:rgba(239,68,68,.12);--red-border:rgba(239,68,68,.3);
+--yellow:#F59E0B;--yellow-bg:rgba(245,158,11,.12);--yellow-border:rgba(245,158,11,.3);
+--blue:#3B82F6;--blue-bg:rgba(59,130,246,.12);--blue-border:rgba(59,130,246,.3);
+--purple:#A855F7;--purple-bg:rgba(168,85,247,.12);
+--cyan:#06B6D4;
+--font-ui:'Poppins',sans-serif;--font-mono:'JetBrains Mono',monospace;
+}
+body{font-family:var(--font-ui);background:var(--bg);color:var(--text);line-height:1.5;min-height:100vh}
+.mono{font-family:var(--font-mono)}
+a{color:var(--blue);text-decoration:none}a:hover{text-decoration:underline}
+
+/* Header */
+.header{background:linear-gradient(135deg,#111827 0%,#1a1f35 100%);border-bottom:1px solid var(--border);padding:1.25rem 2rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem}
+.header-left{display:flex;align-items:center;gap:.75rem}
+.logo{width:36px;height:36px;background:linear-gradient(135deg,var(--blue),var(--purple));border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.9rem;color:#fff}
+.header h1{font-size:1.25rem;font-weight:600;letter-spacing:-.02em}
+.header h1 span{color:var(--blue)}
+.header-right{display:flex;align-items:center;gap:1rem;font-size:.8rem;color:var(--text-muted)}
+.header-badge{background:var(--blue-bg);border:1px solid var(--blue-border);color:var(--blue);padding:.25rem .65rem;border-radius:20px;font-size:.7rem;font-weight:600}
+.updated-text{font-size:.75rem;color:var(--text-dim)}
+
+/* Tabs */
+.tabs{display:flex;gap:0;background:var(--card);border-bottom:1px solid var(--border);padding:0 2rem;overflow-x:auto}
+.tab{padding:.85rem 1.5rem;font-size:.85rem;font-weight:500;color:var(--text-muted);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;white-space:nowrap;user-select:none}
+.tab:hover{color:var(--text)}
+.tab.active{color:var(--blue);border-bottom-color:var(--blue)}
+
+/* Controls bar */
+.controls{display:flex;align-items:center;gap:.75rem;padding:1rem 2rem;flex-wrap:wrap}
+.search-box{display:flex;align-items:center;gap:.5rem;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:.5rem .75rem;flex:1;min-width:200px;max-width:360px}
+.search-box svg{width:16px;height:16px;color:var(--text-dim);flex-shrink:0}
+.search-box input{background:none;border:none;color:var(--text);font-family:var(--font-ui);font-size:.8rem;outline:none;width:100%}
+.search-box input::placeholder{color:var(--text-dim)}
+select.filter-select{background:var(--card);border:1px solid var(--border);color:var(--text);padding:.5rem .75rem;border-radius:8px;font-family:var(--font-ui);font-size:.8rem;cursor:pointer;outline:none}
+select.filter-select:focus{border-color:var(--blue)}
+.btn{display:inline-flex;align-items:center;gap:.4rem;padding:.5rem 1rem;border-radius:8px;font-family:var(--font-ui);font-size:.8rem;font-weight:500;cursor:pointer;border:1px solid var(--border);background:var(--card);color:var(--text);transition:all .15s}
+.btn:hover{border-color:var(--blue);color:var(--blue)}
+.btn svg{width:14px;height:14px}
+
+/* KPI bar */
+.kpi-bar{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:.75rem;padding:0 2rem 1rem}
+.kpi{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1rem 1.25rem}
+.kpi-label{font-size:.7rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.35rem}
+.kpi-value{font-family:var(--font-mono);font-size:1.35rem;font-weight:700}
+.kpi-sub{font-size:.7rem;color:var(--text-muted);margin-top:.2rem}
+
+/* Table */
+.table-wrap{padding:0 2rem 2rem;overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:.8rem}
+thead th{position:sticky;top:0;background:var(--card);border-bottom:1px solid var(--border);padding:.65rem .75rem;text-align:left;font-weight:600;color:var(--text-muted);font-size:.7rem;text-transform:uppercase;letter-spacing:.05em;cursor:pointer;user-select:none;white-space:nowrap}
+thead th:hover{color:var(--text)}
+thead th .sort-arrow{display:inline-block;margin-left:4px;opacity:.4;font-size:.65rem}
+thead th.sorted .sort-arrow{opacity:1;color:var(--blue)}
+tbody td{padding:.6rem .75rem;border-bottom:1px solid var(--border);vertical-align:middle}
+tbody tr:hover{background:rgba(59,130,246,.04)}
+tbody tr.campaign-row{cursor:pointer}
+
+/* Event group header rows */
+tr.event-group-header td{background:linear-gradient(90deg,rgba(59,130,246,.08),transparent);border-bottom:1px solid var(--blue-border);padding:.6rem .75rem;font-weight:600;font-size:.8rem;color:var(--blue);letter-spacing:-.01em}
+tr.event-group-header td .eb-link{margin-left:.5rem;color:var(--text-dim);font-weight:400;font-size:.7rem}
+tr.event-group-header td .eb-link:hover{color:var(--blue)}
+tr.event-group-header td .eb-link svg{width:13px;height:13px;vertical-align:-2px;margin-right:2px}
+
+/* Badges */
+.badge{display:inline-block;padding:.15rem .55rem;border-radius:20px;font-size:.68rem;font-weight:600;font-family:var(--font-mono);letter-spacing:.02em}
+.badge-scale{background:var(--green-bg);border:1px solid var(--green-border);color:var(--green)}
+.badge-hold{background:rgba(107,114,128,.15);border:1px solid rgba(107,114,128,.3);color:#9CA3AF}
+.badge-kill{background:var(--red-bg);border:1px solid var(--red-border);color:var(--red)}
+.campaign-name{max-width:320px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
+
+/* Panel content areas */
+.panel{display:none;padding:0}
+.panel.active{display:block}
+
+/* Event Summary cards */
+.event-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:1rem;padding:1rem 2rem 2rem}
+.event-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.25rem;transition:border-color .2s}
+.event-card:hover{border-color:var(--border-light)}
+.event-card-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1rem}
+.event-card-title{font-size:1rem;font-weight:600}
+.event-card-date{font-size:.7rem;color:var(--text-dim);margin-top:.15rem}
+.event-card-links{display:flex;gap:.5rem;align-items:center}
+.event-card-links a{display:inline-flex;align-items:center;gap:.3rem;font-size:.7rem;padding:.2rem .5rem;background:var(--blue-bg);border:1px solid var(--blue-border);border-radius:6px;color:var(--blue);font-weight:500}
+.event-card-links a:hover{background:rgba(59,130,246,.2);text-decoration:none}
+.event-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.75rem;margin-bottom:1rem}
+.event-stat-label{font-size:.65rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:.05em}
+.event-stat-value{font-family:var(--font-mono);font-size:1.05rem;font-weight:600;margin-top:.15rem}
+.sell-bar-wrap{margin-top:.75rem}
+.sell-bar-label{display:flex;justify-content:space-between;font-size:.7rem;color:var(--text-muted);margin-bottom:.35rem}
+.sell-bar{height:8px;background:var(--border);border-radius:8px;overflow:hidden}
+.sell-bar-fill{height:100%;border-radius:8px;transition:width .5s}
+.sell-bar-fill.low{background:var(--red)}
+.sell-bar-fill.mid{background:var(--yellow)}
+.sell-bar-fill.good{background:var(--green)}
+.event-campaigns-summary{margin-top:1rem;padding-top:.75rem;border-top:1px solid var(--border);font-size:.75rem;color:var(--text-muted)}
+.event-campaigns-summary span{color:var(--text);font-weight:500}
+
+/* Kill/Scale matrix */
+.matrix-wrap{padding:1rem 2rem 2rem}
+.matrix-event-group{margin-bottom:1.5rem}
+.matrix-event-title{font-size:.85rem;font-weight:600;margin-bottom:.5rem;padding:.4rem .75rem;background:rgba(59,130,246,.06);border-radius:8px;border-left:3px solid var(--blue)}
+.matrix-grid{display:flex;flex-wrap:wrap;gap:.5rem;padding:.25rem 0}
+.matrix-cell{padding:.5rem .75rem;border-radius:8px;font-size:.72rem;border:1px solid;cursor:pointer;max-width:260px;min-width:160px;flex:1 1 200px;transition:transform .15s}
+.matrix-cell:hover{transform:translateY(-1px)}
+.matrix-cell.scale{background:var(--green-bg);border-color:var(--green-border);color:var(--green)}
+.matrix-cell.hold{background:rgba(107,114,128,.08);border-color:rgba(107,114,128,.25);color:var(--text-muted)}
+.matrix-cell.kill{background:var(--red-bg);border-color:var(--red-border);color:var(--red)}
+.matrix-cell-name{font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.matrix-cell-cpc{font-family:var(--font-mono);font-size:.7rem;margin-top:.2rem}
+
+/* Modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(4px);z-index:1000;display:flex;align-items:center;justify-content:center;padding:1rem;opacity:0;pointer-events:none;transition:opacity .2s}
+.modal-overlay.open{opacity:1;pointer-events:auto}
+.modal{background:var(--card);border:1px solid var(--border);border-radius:14px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;padding:1.75rem}
+.modal-close{float:right;background:none;border:none;color:var(--text-muted);font-size:1.3rem;cursor:pointer;line-height:1;padding:0 .25rem}
+.modal-close:hover{color:var(--text)}
+.modal h2{font-size:1.1rem;font-weight:600;margin-bottom:.25rem;padding-right:2rem}
+.modal .modal-event{font-size:.8rem;color:var(--blue);margin-bottom:1rem}
+.modal-stats{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:1.25rem}
+.modal-stat{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:.75rem}
+.modal-stat-label{font-size:.65rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:.05em}
+.modal-stat-value{font-family:var(--font-mono);font-size:1.1rem;font-weight:600;margin-top:.2rem}
+.modal-recommendation{margin-top:1rem;padding:1rem;border-radius:8px;font-size:.82rem;line-height:1.6}
+.modal-recommendation.scale{background:var(--green-bg);border:1px solid var(--green-border)}
+.modal-recommendation.hold{background:rgba(107,114,128,.08);border:1px solid rgba(107,114,128,.25)}
+.modal-recommendation.kill{background:var(--red-bg);border:1px solid var(--red-border)}
+.modal-recommendation h3{font-size:.85rem;font-weight:600;margin-bottom:.35rem}
+.modal-recommendation.scale h3{color:var(--green)}
+.modal-recommendation.hold h3{color:var(--text-muted)}
+.modal-recommendation.kill h3{color:var(--red)}
+
+/* Legend */
+.legend{display:flex;gap:1rem;padding:.5rem 2rem;flex-wrap:wrap}
+.legend-item{display:flex;align-items:center;gap:.35rem;font-size:.72rem;color:var(--text-muted)}
+.legend-dot{width:10px;height:10px;border-radius:50%}
+
+/* Tracking status badges */
+.status-badge{display:inline-flex;align-items:center;gap:.3rem;padding:.15rem .5rem;border-radius:5px;font-size:.68rem;font-weight:600;letter-spacing:.02em}
+.status-none{background:rgba(107,114,128,.1);border:1px solid rgba(107,114,128,.2);color:#6B7280}
+.status-needs{background:var(--yellow-bg);border:1px solid var(--yellow-border);color:var(--yellow)}
+.status-active{background:var(--blue-bg);border:1px solid var(--blue-border);color:var(--blue)}
+.status-verified{background:var(--green-bg);border:1px solid var(--green-border);color:var(--green)}
+.priority-critical{background:var(--red-bg);border:1px solid var(--red-border);color:var(--red);padding:.2rem .55rem;border-radius:5px;font-size:.68rem;font-weight:600}
+.priority-high{background:var(--yellow-bg);border:1px solid var(--yellow-border);color:var(--yellow);padding:.2rem .55rem;border-radius:5px;font-size:.68rem;font-weight:600}
+.priority-medium{background:var(--blue-bg);border:1px solid var(--blue-border);color:var(--blue);padding:.2rem .55rem;border-radius:5px;font-size:.68rem;font-weight:600}
+.priority-low{background:rgba(107,114,128,.1);border:1px solid rgba(107,114,128,.2);color:#9CA3AF;padding:.2rem .55rem;border-radius:5px;font-size:.68rem;font-weight:600}
+.tracking-row-icons{display:flex;gap:.35rem}
+.tracking-row-icons .dot{width:7px;height:7px;border-radius:50%;display:inline-block}
+.check-item{display:flex;align-items:flex-start;gap:.5rem;margin-bottom:.15rem}
+.check-item .ci{width:16px;height:16px;border-radius:4px;border:1.5px solid var(--border);display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;font-size:.6rem;margin-top:2px}
+.check-item .ci.done{background:var(--green);border-color:var(--green);color:#fff}
+
+/* Event card tracking badges */
+.event-tracking-row{display:flex;gap:.5rem;margin-top:.6rem;padding-top:.6rem;border-top:1px solid var(--border);flex-wrap:wrap}
+
+/* Responsive */
+@media(max-width:768px){
+  .header{padding:1rem}
+  .controls,.kpi-bar,.table-wrap,.event-grid,.matrix-wrap,.legend{padding-left:1rem;padding-right:1rem}
+  .tabs{padding:0 1rem}
+  .event-stats{grid-template-columns:1fr 1fr}
+}
+</style>
 </head>
 <body>
-    <div class="header">
-        <div class="logo-section">
-            <div class="logo">MetaAdsPro</div>
-            <div class="logo-subtitle">
-                Craft Hospitality Â· Campaign Performance Dashboard
-            </div>
-        </div>
-        <div class="header-right">
-            <div class="header-stat">
-                <div class="header-stat-label">Last Refresh</div>
-                <div class="header-stat-value">Mar 27, 2026</div>
-            </div>
-            <div class="header-stat">
-                <div class="header-stat-label">Total Campaigns</div>
-                <div class="header-stat-value">32</div>
-            </div>
-            <div class="header-stat">
-                <div class="header-stat-label">Est. Total Spend</div>
-                <div class="header-stat-value">$18,547</div>
-            </div>
-        </div>
+
+<div class="header">
+  <div class="header-left">
+    <div class="logo">M</div>
+    <h1><span>MetaAdsPro</span> &middot; Craft Hospitality</h1>
+  </div>
+  <div class="header-right">
+    <span class="header-badge">32 CAMPAIGNS</span>
+    <span class="updated-text">Updated Mar 27, 2026</span>
+  </div>
+</div>
+
+<div class="tabs" id="tabs">
+  <div class="tab active" data-tab="detail">Campaign Detail</div>
+  <div class="tab" data-tab="events">Event Summary</div>
+  <div class="tab" data-tab="matrix">Kill / Scale Matrix</div>
+  <div class="tab" data-tab="tracking">Tracking Setup</div>
+</div>
+
+<!-- Campaign Detail Panel -->
+<div class="panel active" id="panel-detail">
+  <div class="controls">
+    <div class="search-box">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+      <input type="text" id="searchInput" placeholder="Search campaigns...">
     </div>
+    <select class="filter-select" id="eventFilter"><option value="">All Events</option></select>
+    <select class="filter-select" id="actionFilter">
+      <option value="">All Actions</option>
+      <option value="SCALE">Scale</option>
+      <option value="HOLD">Hold</option>
+      <option value="KILL">Kill</option>
+    </select>
+    <button class="btn" onclick="exportCSV()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Export CSV
+    </button>
+  </div>
+  <div class="kpi-bar" id="kpiBar"></div>
+  <div class="table-wrap">
+    <table>
+      <thead id="tableHead"></thead>
+      <tbody id="tableBody"></tbody>
+    </table>
+  </div>
+</div>
 
-    <div class="metrics-bar">
-        <div class="metric-card">
-            <div class="metric-label">Total Spend (Feb 25 - Mar 26)</div>
-            <div class="metric-value">$18,547</div>
-        </div>
-        <div class="metric-card">
-            <div class="metric-label">Total Results</div>
-            <div class="metric-value">20,805</div>
-        </div>
-        <div class="metric-card">
-            <div class="metric-label">Avg CPC/CPV</div>
-            <div class="metric-value">$0.32</div>
-        </div>
-        <div class="metric-card">
-            <div class="metric-label">Active Campaigns</div>
-            <div class="metric-value">32</div>
-        </div>
-        <div class="metric-card">
-            <div class="metric-label">Active Events</div>
-            <div class="metric-value">9</div>
-        </div>
+<!-- Event Summary Panel -->
+<div class="panel" id="panel-events">
+  <div class="kpi-bar" style="padding-top:1rem" id="eventKpiBar"></div>
+  <div class="event-grid" id="eventGrid"></div>
+</div>
+
+<!-- Kill/Scale Matrix Panel -->
+<div class="panel" id="panel-matrix">
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div> SCALE (CPC &lt; $0.20)</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#6B7280"></div> HOLD ($0.20 - $0.45)</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--red)"></div> KILL (CPC &gt; $0.45)</div>
+  </div>
+  <div class="matrix-wrap" id="matrixWrap"></div>
+</div>
+
+<!-- Tracking Setup Panel -->
+<div class="panel" id="panel-tracking">
+  <div class="kpi-bar" style="padding-top:1rem" id="trackingKpiBar"></div>
+  <div style="padding:0 2rem .75rem">
+    <div style="font-size:.8rem;color:var(--text-muted);line-height:1.7;max-width:720px">
+      <strong style="color:var(--text)">Meta recommends a separate pixel per event site</strong> for accurate conversion tracking and campaign optimization. Each Squarespace site needs its own pixel installed, plus Eventbrite server-side CAPI for ticket purchase attribution.
     </div>
-
-    <div class="tabs">
-        <button class="tab-button active" onclick="showTab('campaign-detail')">Campaign Detail</button>
-        <button class="tab-button" onclick="showTab('event-summary')">Event Summary</button>
-        <button class="tab-button" onclick="showTab('kill-scale-matrix')">Kill/Scale Matrix</button>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr>
+        <th style="width:22%">Event</th>
+        <th style="width:14%">Squarespace Site</th>
+        <th style="width:12%">Meta Pixel</th>
+        <th style="width:10%">Pixel ID</th>
+        <th style="width:12%">EB CAPI</th>
+        <th style="width:10%">Days Out</th>
+        <th style="width:20%">Priority</th>
+      </tr></thead>
+      <tbody id="trackingTableBody"></tbody>
+    </table>
+  </div>
+  <div style="padding:1rem 2rem">
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1.25rem;max-width:720px">
+      <div style="font-size:.85rem;font-weight:600;margin-bottom:.75rem;color:var(--text)">Setup Checklist</div>
+      <div style="font-size:.78rem;color:var(--text-muted);line-height:2" id="trackingChecklist"></div>
     </div>
+  </div>
+</div>
 
-    <div class="content">
-        <!-- CAMPAIGN DETAIL TAB -->
-        <div id="campaign-detail" class="tab-content active">
-            <div class="campaign-table-wrapper">
-                <div class="campaign-controls">
-                    <div class="control-group">
-                        <label class="control-label">Filter Event:</label>
-                        <select id="eventFilter" onchange="filterTable()">
-                            <option value="">All Events</option>
-                            <option value="ACF">Atlanta Coffee Fest</option>
-                            <option value="DCCF">DC Coffee Fest</option>
-                            <option value="DCWF">DC Wine Fest</option>
-                            <option value="PWF">Philly Wine Fest</option>
-                            <option value="LACF">LA Coffee Fest</option>
-                            <option value="DMR">DC Margarita Rumble</option>
-                            <option value="NMR">NYC Margarita Rumble</option>
-                            <option value="DACF">Dallas Coffee Fest</option>
-                            <option value="PCF">Philly Cocktail Fest</option>
-                            <option value="SDCF">San Diego Coffee Fest</option>
-                        </select>
-                    </div>
-                    <div class="control-group">
-                        <label class="control-label">Filter Action:</label>
-                        <select id="actionFilter" onchange="filterTable()">
-                            <option value="">All Actions</option>
-                            <option value="SCALE">Scale</option>
-                            <option value="KILL">Kill</option>
-                            <option value="HOLD">Hold</option>
-                        </select>
-                    </div>
-                    <div class="control-group">
-                        <input type="text" id="searchBox" placeholder="Search campaigns..." onkeyup="filterTable()">
-                    </div>
-                    <button class="export-btn" onclick="exportCSV()">Export CSV</button>
-                </div>
+<!-- Detail Modal -->
+<div class="modal-overlay" id="modalOverlay" onclick="if(event.target===this)closeModal()">
+  <div class="modal" id="modal"></div>
+</div>
 
-                <table class="campaign-table">
-                    <thead>
-                        <tr>
-                            <th onclick="sortTable(0)">Campaign Name â</th>
-                            <th onclick="sortTable(1)">Event â</th>
-                            <th onclick="sortTable(2)">Account â</th>
-                            <th onclick="sortTable(3)">Results â</th>
-                            <th onclick="sortTable(4)">CPC/CPV â</th>
-                            <th onclick="sortTable(5)">Est. Spend â</th>
-                            <th onclick="sortTable(6)">Type â</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody id="campaignTableBody">
-                    </tbody>
-                </table>
-            </div>
+<script>
+// ============================================================
+// DATA
+// ============================================================
+const TODAY = new Date(2026, 2, 27); // Mar 27 2026
+
+// Pixel status: "none" | "needs_setup" | "installed" | "verified"
+// CAPI status: "none" | "needs_token" | "active" | "verified"
+const EVENTS = {
+  ACF:  { name:"Atlanta Coffee Fest", abbr:"ACF", eid:"1977143837441", date:null, sold:0, cap:0, gross:0, site:"eventbrite", sqSite:"plums-dolphin-47gw", pixelId:"1869569543746238", pixelStatus:"active", capiStatus:"active", sqPixel:true },
+  DCCF: { name:"DC Coffee Festival", abbr:"DCCF", eid:"1750734015569", date:new Date(2026,8,26), sold:0, cap:0, gross:0, site:"eventbrite", sqSite:"mayflower-chartreuse-ldb3", pixelId:"1736685277293414", pixelStatus:"active", capiStatus:"active", sqPixel:true },
+  DCWF: { name:"DC Wine Fest Spring", abbr:"DCWF", eid:"1815953238019", date:new Date(2026,4,16), sold:463, cap:2300, gross:25228, site:"eventbrite", sqSite:"sam-gelin-i77a", pixelId:"951940349224456", pixelStatus:"active", capiStatus:"active", sqPixel:true },
+  PWF:  { name:"Philly Wine Fest Spring", abbr:"PWF", eid:"1669645688199", date:new Date(2026,4,2), sold:515, cap:2300, gross:30522, site:"eventbrite", sqSite:"sam-gelin-k4ck", pixelId:"1243832410756022", pixelStatus:"active", capiStatus:"active", sqPixel:true },
+  LACF: { name:"LA Coffee Festival", abbr:"LACF", eid:null, date:new Date(2026,4,30), sold:8, cap:0, gross:2695, site:"sho-soft", sqSite:"swan-alligator-brax", pixelId:"1557139702211037", pixelStatus:"active", capiStatus:"n/a (sho-soft)", sqPixel:true },
+  DMR:  { name:"DC Margarita Rumble", abbr:"DMR", eid:"1981430921224", date:new Date(2026,5,13), sold:14, cap:1600, gross:769, site:"eventbrite", sqSite:"sam-gelin-ew7k", pixelId:"2480527455728810", pixelStatus:"active", capiStatus:"active", sqPixel:true },
+  NMR:  { name:"NYC Margarita Rumble", abbr:"NMR", eid:"1669729719539", date:new Date(2026,4,9), sold:155, cap:900, gross:9980, site:"eventbrite", sqSite:"sam-gelin-ew7k", pixelId:"1575782813499465", pixelStatus:"active", capiStatus:"active", sqPixel:true },
+  DACF: { name:"Dallas Coffee Festival", abbr:"DACF", eid:"1334352507269", date:new Date(2026,3,25), sold:0, cap:0, gross:0, site:"eventbrite", sqSite:"wolf-semicircle-m6ap", pixelId:"2862606687412144", pixelStatus:"active", capiStatus:"active", sqPixel:true },
+  PCF:  { name:"Philly Cocktail Fest", abbr:"PCF", eid:"1334838139809", date:new Date(2026,3,18), sold:457, cap:1500, gross:26362, site:"eventbrite", sqSite:"pug-mandolin-c4t2", pixelId:"916783467637276", pixelStatus:"active", capiStatus:"active", sqPixel:true },
+  SDCF: { name:"San Diego Coffee Festival", abbr:"SDCF", eid:"1976519304446", date:new Date(2026,5,6), sold:0, cap:0, gross:0, site:"eventbrite", sqSite:"bison-grasshopper-8en3", pixelId:"26387886817531523", pixelStatus:"active", capiStatus:"active", sqPixel:true },
+  NYCF: { name:"NYC Coffee Festival", abbr:"NYCF", eid:"1754410953389", date:new Date(2026,9,3), sold:3, cap:1199, gross:95, site:"eventbrite", sqSite:"cinnamon-horse-3s68", pixelId:"1415803390292369", pixelStatus:"active", capiStatus:"active", sqPixel:true },
+  DCCK: { name:"The Official DC Cocktail Festival", abbr:"DCCK", eid:"1334045428789", date:new Date(2026,4,30), sold:1252, cap:1500, gross:70872, site:"eventbrite", sqSite:"taylor-conlin-5r10", pixelId:"940990865086582", pixelStatus:"active", capiStatus:"active", sqPixel:true }
+};
+
+const CAMPAIGNS = [
+  // Account 1 – Link Clicks
+  {id:1, name:"ACF \u2764\uFE0F\u2615\uFE0F\uD83C\uDF89", event:"ACF", results:null, cpc:0.23, account:"Link Clicks"},
+  {id:2, name:"DCCF \u2615\uFE0F Finding your new fav coffee", event:"DCCF", results:null, cpc:0.13, account:"Link Clicks"},
+  {id:3, name:"DCWF \uD83D\uDC6F\u200D\u2640\uFE0F\uD83C\uDF77 Besties + bottomless wine", event:"DCWF", results:null, cpc:null, account:"Link Clicks"},
+  {id:4, name:"PWF Wine Time \u23F0 Gather your crew", event:"PWF", results:525, cpc:0.20, account:"Link Clicks"},
+  {id:5, name:"DCWF \uD83E\uDD20Giddy up! DC\u2019s favorite wine", event:"DCWF", results:263, cpc:0.40, account:"Link Clicks"},
+  {id:6, name:"LACF \u2615\u2728 The city\u2019s greatest coffee", event:"LACF", results:1403, cpc:0.11, account:"Link Clicks"},
+  {id:7, name:"DCWF Who do you want to see there?", event:"DCWF", results:1666, cpc:0.50, account:"Link Clicks"},
+  {id:8, name:"LACF Can\u2019t wait for the LA Coffee", event:"LACF", results:2183, cpc:0.22, account:"Link Clicks"},
+  {id:9, name:"LACF The Best Coffee in LA, All Under", event:"LACF", results:459, cpc:0.26, account:"Link Clicks"},
+  {id:10, name:"LACF Love \u2615\uFE0F as much as we do?", event:"LACF", results:574, cpc:0.21, account:"Link Clicks"},
+  {id:11, name:"LACF So much coffee! So much fun! \uD83E\uDD29\uD83C\uDF9F\uFE0F", event:"LACF", results:676, cpc:0.18, account:"Link Clicks"},
+  {id:12, name:"PWF Philly wine Who do you want to see there?", event:"PWF", results:1023, cpc:0.24, account:"Link Clicks"},
+  {id:13, name:"PWF Philly Wine Fest is always a fun", event:"PWF", results:386, cpc:0.31, account:"Link Clicks"},
+  {id:14, name:"PWF \uD83D\uDCCD\uD83D\uDCC6 Philly Wine Fest : Spring", event:"PWF", results:519, cpc:0.23, account:"Link Clicks"},
+  {id:15, name:"DMR DC\u2019s #1 margarita party\uD83C\uDF79 15 of", event:"DMR", results:753, cpc:0.32, account:"Link Clicks"},
+  {id:16, name:"NMR The Official NYC Margarita Rumble", event:"NMR", results:537, cpc:0.22, account:"Link Clicks"},
+  {id:17, name:"NMR NYC Rumble We can\u2019t wait to find out", event:"NMR", results:300, cpc:0.40, account:"Link Clicks"},
+  // Account 2 – Video Views
+  {id:18, name:"Dallas So much coffee \uD83E\uDD29So much fun \uD83C\uDF89", event:"DACF", results:null, cpc:0.65, account:"Video Views"},
+  {id:19, name:"The Official Dallas Coffee", event:"DACF", results:null, cpc:0.56, account:"Video Views"},
+  {id:20, name:"Dallas Unmatched, happy energy \uD83D\uDE01\u2764\uFE0F", event:"DACF", results:null, cpc:0.54, account:"Video Views"},
+  {id:21, name:"Dallas \u2615\uFE0F\uD83D\uDE4C\u2728", event:"DACF", results:191, cpc:0.34, account:"Video Views"},
+  {id:22, name:"Dallas So much coffee \uD83E\uDD29So much fun \uD83C\uDF89 (v2)", event:"DACF", results:null, cpc:0.58, account:"Video Views"},
+  {id:23, name:"Dallas Always better when we\u2019re", event:"DACF", results:922, cpc:0.41, account:"Video Views"},
+  {id:24, name:"Philly\u2019s biggest cocktail tasting", event:"PCF", results:146, cpc:0.33, account:"Video Views"},
+  {id:25, name:"philly Great cocktails. Great", event:"PCF", results:173, cpc:0.28, account:"Video Views"},
+  {id:26, name:"philly Pouring up a good one for you \u2764\uFE0F\uD83C\uDF78", event:"PCF", results:302, cpc:0.16, account:"Video Views"},
+  {id:27, name:"Dallas \u2615\u2728 The city\u2019s greatest coffee", event:"DACF", results:4767, cpc:0.16, account:"Video Views"},
+  {id:28, name:"Dallas\u2019s coffee community \u2615\uFE0F\u200D\uD83D\uDD25", event:"DACF", results:570, cpc:0.59, account:"Video Views"},
+  {id:29, name:"The Official Philly Cocktail", event:"PCF", results:2485, cpc:0.20, account:"Video Views"},
+  {id:30, name:"SDCF Assemble your coffee crew \u2615\uFE0F\uD83D\uDC4F\uD83D\uDCC6", event:"SDCF", results:856, cpc:0.17, account:"Video Views"},
+  {id:31, name:"SDCF Lots of smiles & LOTS of bags of", event:"SDCF", results:381, cpc:0.16, account:"Video Views"},
+  {id:32, name:"San Diego\u2019s amazing coffee", event:"SDCF", results:312, cpc:0.38, account:"Video Views"}
+];
+
+// ============================================================
+// HELPERS
+// ============================================================
+function fmt$(n){if(n==null)return"\u2014";return"$"+n.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2})}
+function fmtInt(n){if(n==null)return"\u2014";return n.toLocaleString("en-US")}
+function fmtPct(n){if(n==null||isNaN(n))return"\u2014";return(n*100).toFixed(1)+"%"}
+
+function getAction(cpc){
+  if(cpc==null) return "HOLD";
+  if(cpc<0.20) return "SCALE";
+  if(cpc>0.45) return "KILL";
+  return "HOLD";
+}
+
+function actionBadge(action){
+  const cls = action==="SCALE"?"badge-scale":action==="KILL"?"badge-kill":"badge-hold";
+  return `<span class="badge ${cls}">${action}</span>`;
+}
+
+function daysOut(ev){
+  if(!ev.date) return null;
+  const diff = Math.ceil((ev.date - TODAY)/(1000*60*60*24));
+  return diff;
+}
+
+function ebUrl(eid){return eid?`https://www.eventbrite.com/myevent?eid=${eid}`:null}
+
+function ebIcon(){
+  return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline-block"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>`;
+}
+
+// Build event aggregates
+function getEventAggregates(){
+  const agg = {};
+  for(const key in EVENTS){
+    agg[key] = {
+      ...EVENTS[key],
+      campaigns: [],
+      totalResults: 0,
+      totalSpend: 0,
+      avgCpc: null,
+      scaleCount:0, holdCount:0, killCount:0
+    };
+  }
+  CAMPAIGNS.forEach(c=>{
+    const e = agg[c.event];
+    if(!e) return;
+    e.campaigns.push(c);
+    if(c.results) e.totalResults += c.results;
+    if(c.cpc!=null && c.results!=null) e.totalSpend += c.cpc * c.results;
+    else if(c.cpc!=null) e.totalSpend += 0; // no results = unknown spend
+    const a = getAction(c.cpc);
+    if(a==="SCALE") e.scaleCount++;
+    else if(a==="KILL") e.killCount++;
+    else e.holdCount++;
+  });
+  for(const key in agg){
+    const e = agg[key];
+    const cpcs = e.campaigns.filter(c=>c.cpc!=null).map(c=>c.cpc);
+    if(cpcs.length) e.avgCpc = cpcs.reduce((a,b)=>a+b,0)/cpcs.length;
+  }
+  return agg;
+}
+
+// ============================================================
+// EVENT ORDER (sorted by date, nulls last)
+// ============================================================
+const EVENT_ORDER = Object.keys(EVENTS).sort((a,b)=>{
+  const da=EVENTS[a].date, db=EVENTS[b].date;
+  if(!da && !db) return 0;
+  if(!da) return 1;
+  if(!db) return -1;
+  return da-db;
+});
+
+// ============================================================
+// TABS
+// ============================================================
+document.querySelectorAll(".tab").forEach(tab=>{
+  tab.addEventListener("click",()=>{
+    document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
+    document.querySelectorAll(".panel").forEach(p=>p.classList.remove("active"));
+    tab.classList.add("active");
+    document.getElementById("panel-"+tab.dataset.tab).classList.add("active");
+  });
+});
+
+// ============================================================
+// CAMPAIGN DETAIL TAB
+// ============================================================
+let sortCol = null, sortDir = 1;
+
+function buildEventFilter(){
+  const sel = document.getElementById("eventFilter");
+  EVENT_ORDER.forEach(key=>{
+    const o = document.createElement("option");
+    o.value = key; o.textContent = EVENTS[key].name;
+    sel.appendChild(o);
+  });
+}
+
+function getFilteredCampaigns(){
+  const q = document.getElementById("searchInput").value.toLowerCase();
+  const evf = document.getElementById("eventFilter").value;
+  const af = document.getElementById("actionFilter").value;
+  let list = CAMPAIGNS.filter(c=>{
+    if(q && !c.name.toLowerCase().includes(q) && !EVENTS[c.event].name.toLowerCase().includes(q)) return false;
+    if(evf && c.event!==evf) return false;
+    if(af && getAction(c.cpc)!==af) return false;
+    return true;
+  });
+  return list;
+}
+
+function renderKPIs(){
+  const all = CAMPAIGNS;
+  const totalResults = all.reduce((s,c)=>s+(c.results||c.clicks||0),0);
+  const cpcs = all.filter(c=>c.cpc!=null).map(c=>c.cpc);
+  const avgCpc = cpcs.length? cpcs.reduce((a,b)=>a+b,0)/cpcs.length : null;
+  const scaleN = all.filter(c=>getAction(c.cpc)==="SCALE").length;
+  const killN = all.filter(c=>getAction(c.cpc)==="KILL").length;
+  // Use actual spend if available from live data, otherwise estimate
+  const totalSpend = all.reduce((s,c)=>s+(c.spend||((c.cpc||0)*(c.results||0))),0);
+  const totalImpressions = all.reduce((s,c)=>s+(c.impressions||0),0);
+  const activeCampaigns = all.filter(c=>c.status==="ACTIVE").length;
+
+  document.getElementById("kpiBar").innerHTML = `
+    <div class="kpi"><div class="kpi-label">Total Spend</div><div class="kpi-value mono">${fmt$(totalSpend)}</div>${dataStatus==="live"?'<div class="kpi-sub">Last 30 days</div>':''}</div>
+    <div class="kpi"><div class="kpi-label">Total Results</div><div class="kpi-value mono">${fmtInt(totalResults)}</div>${totalImpressions?`<div class="kpi-sub">${fmtInt(totalImpressions)} impressions</div>`:''}</div>
+    <div class="kpi"><div class="kpi-label">Avg CPC</div><div class="kpi-value mono">${fmt$(avgCpc)}</div></div>
+    <div class="kpi"><div class="kpi-label">Scale / Kill</div><div class="kpi-value"><span style="color:var(--green)">${scaleN}</span> <span style="color:var(--text-dim)">/</span> <span style="color:var(--red)">${killN}</span></div><div class="kpi-sub">${activeCampaigns?activeCampaigns+' active / ':''} ${all.length} total</div></div>
+    <div class="kpi"><div class="kpi-label">Active Events</div><div class="kpi-value mono">${EVENT_ORDER.length}</div></div>
+  `;
+}
+
+function renderTable(){
+  const cols = [
+    {key:"name",label:"Campaign",w:"28%"},
+    {key:"event",label:"Event",w:"8%"},
+    {key:"account",label:"Type",w:"8%"},
+    {key:"results",label:"Results",w:"8%",align:"right"},
+    {key:"spend",label:"Spend",w:"9%",align:"right"},
+    {key:"cpc",label:"CPC",w:"8%",align:"right"},
+    {key:"action",label:"Action",w:"7%",align:"center"},
+    {key:"status",label:"Status",w:"7%",align:"center"}
+  ];
+
+  // Thead
+  document.getElementById("tableHead").innerHTML = "<tr>"+cols.map(c=>{
+    const sorted = sortCol===c.key;
+    const arrow = sorted?(sortDir===1?"\u25B2":"\u25BC"):"\u25B2";
+    return `<th style="width:${c.w};text-align:${c.align||'left'}" class="${sorted?'sorted':''}" data-col="${c.key}">${c.label}<span class="sort-arrow">${arrow}</span></th>`;
+  }).join("")+"</tr>";
+
+  // Data
+  const filtered = getFilteredCampaigns();
+
+  // Group by event in EVENT_ORDER
+  const grouped = {};
+  EVENT_ORDER.forEach(k=>grouped[k]=[]);
+  filtered.forEach(c=>{if(grouped[c.event])grouped[c.event].push(c)});
+
+  // If sorted by a specific column, sort within groups
+  if(sortCol){
+    for(const k in grouped){
+      grouped[k].sort((a,b)=>{
+        let va,vb;
+        if(sortCol==="action"){va=getAction(a.cpc);vb=getAction(b.cpc)}
+        else if(sortCol==="name"){va=a.name.toLowerCase();vb=b.name.toLowerCase()}
+        else if(sortCol==="event"){va=EVENTS[a.event].name;vb=EVENTS[b.event].name}
+        else{va=a[sortCol];vb=b[sortCol]}
+        if(va==null&&vb==null)return 0;if(va==null)return 1;if(vb==null)return -1;
+        if(typeof va==="string")return va.localeCompare(vb)*sortDir;
+        return (va-vb)*sortDir;
+      });
+    }
+  }
+
+  let html = "";
+  EVENT_ORDER.forEach(evKey=>{
+    const rows = grouped[evKey];
+    if(!rows||!rows.length) return;
+    const ev = EVENTS[evKey];
+    const link = ebUrl(ev.eid);
+    const linkHtml = link?`<a class="eb-link" href="${link}" target="_blank" rel="noopener" title="Open in Eventbrite">${ebIcon()} Eventbrite</a>`
+      :`<span class="eb-link" style="opacity:.4" title="No Eventbrite ID yet">${ebIcon()} No EB link</span>`;
+    html += `<tr class="event-group-header"><td colspan="8">${ev.name} (${rows.length} campaign${rows.length>1?"s":""}) ${linkHtml}</td></tr>`;
+    rows.forEach(c=>{
+      const action = getAction(c.cpc);
+      const statusColor = c.status==="ACTIVE"?"var(--green)":c.status==="PAUSED"?"var(--yellow)":"var(--text-dim)";
+      const statusLabel = c.status==="ACTIVE"?"ACTIVE":c.status==="PAUSED"?"PAUSED":c.status||"—";
+      html += `<tr class="campaign-row" onclick="openModal('${c.id}')">
+        <td><span class="campaign-name" title="${(c.name||'').replace(/"/g,'&quot;')}">${c.name}</span></td>
+        <td style="color:var(--text-muted)">${ev.abbr}</td>
+        <td style="color:var(--text-dim);font-size:.72rem">${c.account}</td>
+        <td class="mono" style="text-align:right">${fmtInt(c.results||c.clicks)}</td>
+        <td class="mono" style="text-align:right">${c.spend?fmt$(c.spend):"\u2014"}</td>
+        <td class="mono" style="text-align:right">${c.cpc!=null?fmt$(c.cpc):"\u2014"}</td>
+        <td style="text-align:center">${actionBadge(action)}</td>
+        <td style="text-align:center;font-size:.68rem;color:${statusColor}">${statusLabel}</td>
+      </tr>`;
+    });
+  });
+
+  document.getElementById("tableBody").innerHTML = html;
+}
+
+// Sort handler
+document.getElementById("tableHead").addEventListener("click",e=>{
+  const th = e.target.closest("th");
+  if(!th) return;
+  const col = th.dataset.col;
+  if(sortCol===col) sortDir*=-1;
+  else{sortCol=col;sortDir=1}
+  renderTable();
+});
+
+// Filters
+document.getElementById("searchInput").addEventListener("input",renderTable);
+document.getElementById("eventFilter").addEventListener("change",renderTable);
+document.getElementById("actionFilter").addEventListener("change",renderTable);
+
+// CSV Export
+function exportCSV(){
+  const rows = [["Campaign","Event","Type","Results","CPC","Action"]];
+  getFilteredCampaigns().forEach(c=>{
+    rows.push([
+      `"${c.name.replace(/"/g,'""')}"`,
+      EVENTS[c.event].name,
+      c.account,
+      c.results!=null?c.results:"",
+      c.cpc!=null?c.cpc:"",
+      getAction(c.cpc)
+    ]);
+  });
+  const csv = rows.map(r=>r.join(",")).join("\n");
+  const blob = new Blob([csv],{type:"text/csv"});
+  const a = document.createElement("a");
+  a.href=URL.createObjectURL(blob);
+  a.download="metaadspro_campaigns.csv";
+  a.click();
+}
+
+// ============================================================
+// EVENT SUMMARY TAB
+// ============================================================
+function renderEventSummary(){
+  const agg = getEventAggregates();
+  // KPIs
+  const totalGross = Object.values(EVENTS).reduce((s,e)=>s+e.gross,0);
+  const totalSold = Object.values(EVENTS).reduce((s,e)=>s+e.sold,0);
+  const totalAdSpend = Object.values(EVENTS).reduce((s,e)=>s+(e.liveSpend||0),0);
+  const totalAdClicks = Object.values(EVENTS).reduce((s,e)=>s+(e.liveClicks||0),0);
+  document.getElementById("eventKpiBar").innerHTML = `
+    <div class="kpi"><div class="kpi-label">Total Ticket Revenue</div><div class="kpi-value mono">${fmt$(totalGross)}</div></div>
+    <div class="kpi"><div class="kpi-label">Total Ad Spend</div><div class="kpi-value mono">${fmt$(totalAdSpend)}</div>${totalGross>0&&totalAdSpend>0?`<div class="kpi-sub">ROAS: ${(totalGross/totalAdSpend).toFixed(1)}x</div>`:''}</div>
+    <div class="kpi"><div class="kpi-label">Total Tickets Sold</div><div class="kpi-value mono">${fmtInt(totalSold)}</div>${totalAdClicks?`<div class="kpi-sub">${fmtInt(totalAdClicks)} ad clicks</div>`:''}</div>
+    <div class="kpi"><div class="kpi-label">Campaigns Running</div><div class="kpi-value mono">${CAMPAIGNS.filter(c=>c.status==="ACTIVE").length||CAMPAIGNS.length}</div><div class="kpi-sub">of ${CAMPAIGNS.length} total</div></div>
+  `;
+
+  let html = "";
+  EVENT_ORDER.forEach(key=>{
+    const ev = EVENTS[key];
+    const a = agg[key];
+    const days = daysOut(ev);
+    const daysLabel = days!=null?(days>0?days+" days out":days===0?"TODAY":Math.abs(days)+" days ago"):"TBD";
+    const daysColor = days!=null?(days<=14?"var(--red)":days<=30?"var(--yellow)":"var(--text-muted)"):"var(--text-dim)";
+    const sellPct = ev.cap>0?ev.sold/ev.cap:0;
+    const barClass = sellPct<0.2?"low":sellPct<0.5?"mid":"good";
+    const link = ebUrl(ev.eid);
+
+    html += `<div class="event-card">
+      <div class="event-card-header">
+        <div>
+          <div class="event-card-title">${ev.name}</div>
+          <div class="event-card-date" style="color:${daysColor}">${ev.date?ev.date.toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"}):"Date TBD"} &middot; ${daysLabel}</div>
         </div>
-
-        <!-- EVENT SUMMARY TAB -->
-        <div id="event-summary" class="tab-content">
-            <div class="event-grid" id="eventGrid">
-            </div>
+        <div class="event-card-links">
+          ${link?`<a href="${link}" target="_blank" rel="noopener">${ebIcon()} Eventbrite</a>`:""}
         </div>
+      </div>
+      <div class="event-stats">
+        <div><div class="event-stat-label">Tickets Sold</div><div class="event-stat-value mono">${fmtInt(ev.sold)}${ev.cap?` / ${fmtInt(ev.cap)}`:""}</div></div>
+        <div><div class="event-stat-label">Ticket Revenue</div><div class="event-stat-value mono">${fmt$(ev.gross)}</div></div>
+        <div><div class="event-stat-label">Avg CPC</div><div class="event-stat-value mono">${a.avgCpc!=null?fmt$(a.avgCpc):"\u2014"}</div></div>
+      </div>
+      ${ev.liveSpend?`<div class="event-stats" style="margin-top:0">
+        <div><div class="event-stat-label">Ad Spend</div><div class="event-stat-value mono" style="color:var(--yellow)">${fmt$(ev.liveSpend)}</div></div>
+        <div><div class="event-stat-label">Ad Clicks</div><div class="event-stat-value mono">${fmtInt(ev.liveClicks||0)}</div></div>
+        <div><div class="event-stat-label">ROAS</div><div class="event-stat-value mono" style="color:${ev.gross&&ev.liveSpend&&(ev.gross/ev.liveSpend)>=2?'var(--green)':'var(--red)'}">${ev.gross&&ev.liveSpend?(ev.gross/ev.liveSpend).toFixed(1)+'x':'\u2014'}</div></div>
+      </div>`:''}
+      ${ev.cap>0?`<div class="sell-bar-wrap">
+        <div class="sell-bar-label"><span>Sell-through</span><span class="mono">${fmtPct(sellPct)}</span></div>
+        <div class="sell-bar"><div class="sell-bar-fill ${barClass}" style="width:${Math.min(sellPct*100,100)}%"></div></div>
+      </div>`:""}
+      <div class="event-campaigns-summary">
+        <span>${a.campaigns.length}</span> campaigns &middot;
+        <span style="color:var(--green)">${a.scaleCount} scale</span> &middot;
+        <span>${a.holdCount} hold</span> &middot;
+        <span style="color:var(--red)">${a.killCount} kill</span>
+        ${a.totalResults?` &middot; <span class="mono">${fmtInt(a.totalResults)}</span> results`:""}
+      </div>
+      <div class="event-tracking-row">
+        ${pixelBadge(ev.pixelStatus)}
+        ${capiBadge(ev.capiStatus)}
+      </div>
+    </div>`;
+  });
+  document.getElementById("eventGrid").innerHTML = html;
+}
 
-        <!-- KILL/SCALE MATRIX TAB -->
-        <div id="kill-scale-matrix" class="tab-content">
-            <div id="matrixContainer">
-            </div>
-        </div>
+// ============================================================
+// KILL / SCALE MATRIX
+// ============================================================
+function renderMatrix(){
+  const agg = getEventAggregates();
+  let html = "";
+  EVENT_ORDER.forEach(key=>{
+    const a = agg[key];
+    if(!a.campaigns.length) return;
+    html += `<div class="matrix-event-group">
+      <div class="matrix-event-title">${a.name} (${a.abbr})</div>
+      <div class="matrix-grid">`;
+    // Sort: SCALE first, then HOLD, then KILL
+    const order = {SCALE:0,HOLD:1,KILL:2};
+    const sorted = [...a.campaigns].sort((x,y)=>order[getAction(x.cpc)]-order[getAction(y.cpc)]);
+    sorted.forEach(c=>{
+      const action = getAction(c.cpc);
+      const cls = action.toLowerCase();
+      html += `<div class="matrix-cell ${cls}" onclick="openModal(${c.id})">
+        <div class="matrix-cell-name" title="${c.name.replace(/"/g,'&quot;')}">${c.name}</div>
+        <div class="matrix-cell-cpc">${c.cpc!=null?fmt$(c.cpc)+" CPC":"No CPC data"} &middot; ${action}</div>
+      </div>`;
+    });
+    html += `</div></div>`;
+  });
+  document.getElementById("matrixWrap").innerHTML = html;
+}
+
+// ============================================================
+// TRACKING STATUS HELPERS
+// ============================================================
+function pixelBadge(status){
+  const map = {
+    none: `<span class="status-badge status-none">Pixel: N/A</span>`,
+    needs_setup: `<span class="status-badge status-needs">Pixel: Needs Setup</span>`,
+    installed: `<span class="status-badge status-active">Pixel: Installed</span>`,
+    active: `<span class="status-badge status-active">Pixel: Active</span>`,
+    verified: `<span class="status-badge status-verified">Pixel: Verified</span>`
+  };
+  return map[status]||map.none;
+}
+function capiBadge(status){
+  if(status && status.startsWith("n/a")) return `<span class="status-badge status-none">CAPI: ${status}</span>`;
+  const map = {
+    none: `<span class="status-badge status-none">CAPI: N/A</span>`,
+    needs_token: `<span class="status-badge status-needs">CAPI: Needs Token</span>`,
+    active: `<span class="status-badge status-active">CAPI: Active</span>`,
+    verified: `<span class="status-badge status-verified">CAPI: Verified</span>`
+  };
+  return map[status]||map.none;
+}
+function getPriority(ev){
+  const days = daysOut(ev);
+  if(days===null) return {label:"Low",cls:"priority-low"};
+  if(days<=21) return {label:"CRITICAL",cls:"priority-critical"};
+  if(days<=45) return {label:"High",cls:"priority-high"};
+  if(days<=90) return {label:"Medium",cls:"priority-medium"};
+  return {label:"Low",cls:"priority-low"};
+}
+
+// ============================================================
+// TRACKING SETUP TAB
+// ============================================================
+function renderTrackingSetup(){
+  // KPIs
+  const total = EVENT_ORDER.length;
+  const pixelDone = EVENT_ORDER.filter(k=>["installed","active","verified"].includes(EVENTS[k].pixelStatus)).length;
+  const capiDone = EVENT_ORDER.filter(k=>["active","verified"].includes(EVENTS[k].capiStatus)||EVENTS[k].capiStatus.startsWith("n/a")).length;
+  const needsAction = EVENT_ORDER.filter(k=>{
+    const e=EVENTS[k]; return e.pixelStatus==="needs_setup"||e.capiStatus==="needs_token";
+  }).length;
+  const fullyTracked = EVENT_ORDER.filter(k=>{
+    const e=EVENTS[k];
+    const pxOk = ["installed","active","verified"].includes(e.pixelStatus);
+    const capiOk = ["active","verified"].includes(e.capiStatus)||e.capiStatus.startsWith("n/a");
+    return pxOk && capiOk;
+  }).length;
+
+  document.getElementById("trackingKpiBar").innerHTML = `
+    <div class="kpi"><div class="kpi-label">Pixels Installed</div><div class="kpi-value"><span style="color:${pixelDone>0?'var(--green)':'var(--red)'}" class="mono">${pixelDone}</span> <span style="color:var(--text-dim);font-size:.8rem">/ ${total}</span></div></div>
+    <div class="kpi"><div class="kpi-label">CAPI Active</div><div class="kpi-value"><span style="color:${capiDone>0?'var(--green)':'var(--red)'}" class="mono">${capiDone}</span> <span style="color:var(--text-dim);font-size:.8rem">/ ${total}</span></div></div>
+    <div class="kpi"><div class="kpi-label">Needs Action</div><div class="kpi-value mono" style="color:var(--yellow)">${needsAction}</div></div>
+    <div class="kpi"><div class="kpi-label">Fully Tracked</div><div class="kpi-value mono" style="color:var(--green)">${fullyTracked}</div></div>
+  `;
+
+  // Table sorted by priority (soonest events first)
+  const sorted = [...EVENT_ORDER].sort((a,b)=>{
+    const da=EVENTS[a].date,db=EVENTS[b].date;
+    if(!da&&!db)return 0;if(!da)return 1;if(!db)return -1;return da-db;
+  });
+
+  let rows = "";
+  sorted.forEach(key=>{
+    const ev = EVENTS[key];
+    const days = daysOut(ev);
+    const pri = getPriority(ev);
+    const daysLabel = days!=null?(days>0?days+"d":days===0?"TODAY":Math.abs(days)+"d ago"):"TBD";
+    const daysColor = days!=null?(days<=14?"var(--red)":days<=30?"var(--yellow)":"var(--text-muted)"):"var(--text-dim)";
+    rows += `<tr>
+      <td style="font-weight:500">${ev.name} <span style="color:var(--text-dim);font-size:.7rem">(${ev.abbr})</span></td>
+      <td>${ev.sqSite?`<a href="https://${ev.sqSite}.squarespace.com/config/pages/website-tools/code-injection" target="_blank" style="font-size:.72rem">${ev.sqSite}</a>`:'<span style="color:var(--text-dim);font-size:.72rem">—</span>'}</td>
+      <td>${pixelBadge(ev.pixelStatus)} ${ev.sqPixel?'<span class="status-badge status-active" style="font-size:.6rem">SQ</span>':''}</td>
+      <td class="mono" style="font-size:.72rem;color:var(--text-dim)">${ev.pixelId||"\u2014"}</td>
+      <td>${capiBadge(ev.capiStatus)}</td>
+      <td class="mono" style="color:${daysColor};font-size:.8rem">${daysLabel}</td>
+      <td><span class="${pri.cls}">${pri.label}</span></td>
+    </tr>`;
+  });
+  document.getElementById("trackingTableBody").innerHTML = rows;
+
+  // Checklist
+  const hasAnyPixel = pixelDone > 0;
+  const hasAnyCapi = capiDone > 0;
+  const steps = [
+    {done:true, text:"Create one Meta Pixel per event in Meta Events Manager (Business Settings &rarr; Data Sources &rarr; Pixels) &mdash; <strong>12/12 done</strong>"},
+    {done:true, text:"Install each pixel on its corresponding Squarespace site (Code Injection &rarr; Header) &mdash; <strong>12/12 done</strong> (NMR/DMR share site w/ conditional routing)"},
+    {done:true, text:"Set dedicated per-event pixel on each Eventbrite event (Tracking &rarr; Meta Pixel) &mdash; <strong>11/11 Eventbrite events done</strong>"},
+    {done:true, text:"Enable server-side CAPI on each Eventbrite event with access token &mdash; <strong>11/11 Eventbrite events done</strong>"},
+    {done:true, text:"Generate Meta CAPI access token via Events Manager &mdash; <strong>Done (business-level token)</strong>"},
+    {done:false, text:"Verify pixels fire correctly using Meta Pixel Helper Chrome extension"},
+    {done:false, text:"Confirm CAPI events appear in Meta Events Manager &rarr; Test Events tab"},
+    {done:false, text:"Assign each pixel to its corresponding ad campaigns in Meta Ads Manager for conversion optimization"}
+  ];
+  document.getElementById("trackingChecklist").innerHTML = steps.map(s=>
+    `<div class="check-item"><span class="ci ${s.done?'done':''}">${s.done?'\u2713':''}</span><span>${s.text}</span></div>`
+  ).join("");
+}
+
+// ============================================================
+// MODAL
+// ============================================================
+function openModal(id){
+  const c = CAMPAIGNS.find(x=>String(x.id)===String(id));
+  if(!c) return;
+  const ev = EVENTS[c.event];
+  const action = getAction(c.cpc);
+  const cls = action.toLowerCase();
+  const days = daysOut(ev);
+  const link = ebUrl(ev.eid);
+
+  let rec = "";
+  if(action==="SCALE"){
+    rec = `<strong>Recommendation:</strong> Increase daily budget by 25-40%. This campaign is performing well below the $0.20 CPC threshold. Consider duplicating creative for A/B testing at higher spend.`;
+  } else if(action==="KILL"){
+    rec = `<strong>Recommendation:</strong> Pause this campaign immediately. CPC of ${fmt$(c.cpc)} exceeds the $0.45 kill threshold. Reallocate budget to top-performing campaigns in this event.`;
+  } else {
+    rec = `<strong>Recommendation:</strong> Maintain current budget and monitor. CPC is within acceptable range. Review performance again in 48 hours to determine if optimization is needed.`;
+  }
+
+  document.getElementById("modal").innerHTML = `
+    <button class="modal-close" onclick="closeModal()">&times;</button>
+    <h2>${c.name}</h2>
+    <div class="modal-event">${ev.name} ${link?`&middot; <a href="${link}" target="_blank" rel="noopener">View on Eventbrite</a>`:""}</div>
+    <div class="modal-stats">
+      <div class="modal-stat"><div class="modal-stat-label">Results / Clicks</div><div class="modal-stat-value mono">${fmtInt(c.results||c.clicks)}</div></div>
+      <div class="modal-stat"><div class="modal-stat-label">Spend</div><div class="modal-stat-value mono">${c.spend?fmt$(c.spend):"\u2014"}</div></div>
+      <div class="modal-stat"><div class="modal-stat-label">CPC</div><div class="modal-stat-value mono">${c.cpc!=null?fmt$(c.cpc):"\u2014"}</div></div>
+      <div class="modal-stat"><div class="modal-stat-label">Impressions</div><div class="modal-stat-value mono">${fmtInt(c.impressions||0)}</div></div>
+      <div class="modal-stat"><div class="modal-stat-label">Campaign Type</div><div class="modal-stat-value" style="font-size:.85rem">${c.account}</div></div>
+      <div class="modal-stat"><div class="modal-stat-label">Days to Event</div><div class="modal-stat-value mono">${days!=null?days:"TBD"}</div></div>
     </div>
-
-    <!-- MODAL -->
-    <div id="campaignModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <div class="modal-title" id="modalTitle"></div>
-                <button class="modal-close" onclick="closeModal()">â</button>
-            </div>
-            <div id="modalBody"></div>
-        </div>
+    ${ev.sold>0||ev.cap>0?`<div style="font-size:.8rem;color:var(--text-muted);margin-bottom:.75rem">
+      Ticket sales: <span class="mono" style="color:var(--text)">${fmtInt(ev.sold)}</span>${ev.cap?` / ${fmtInt(ev.cap)}`:""} &middot; Revenue: <span class="mono" style="color:var(--text)">${fmt$(ev.gross)}</span>
+    </div>`:""}
+    <div style="display:flex;gap:.5rem;margin-bottom:.75rem;flex-wrap:wrap">${pixelBadge(ev.pixelStatus)} ${capiBadge(ev.capiStatus)}</div>
+    <div class="modal-recommendation ${cls}">
+      <h3>${action==="SCALE"?"\u{1F7E2} SCALE":action==="KILL"?"\u{1F534} KILL":"\u26AA HOLD"}</h3>
+      <p>${rec}</p>
     </div>
+  `;
+  document.getElementById("modalOverlay").classList.add("open");
+}
+function closeModal(){document.getElementById("modalOverlay").classList.remove("open")}
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeModal()});
 
-    <script>
-        const campaignData = [
-            // Account 1: 10102135202329320
-            { name: "ACF â¤ï¸âï¸ð", event: "ACF", account: "10102135202329320", status: "Active", results: null, cpc: 0.23, type: "Link Clicks" },
-            { name: "DCCF âï¸ Finding your new fav coffee", event: "DCCF", account: "10102135202329320", status: "Active", results: null, cpc: 0.13, type: "Link Clicks" },
-            { name: "DCWF ð¯ââï¸ð· Besties + bottomless wine", event: "DCWF", account: "10102135202329320", status: "Active", results: null, cpc: null, type: "Link Clicks" },
-            { name: "PWF Wine Time â° Gather your crew", event: "PWF", account: "10102135202329320", status: "Active", results: 525, cpc: 0.20, type: "Link Clicks" },
-            { name: "DCWF ð¤ Giddy up! DC's favorite wine", event: "DCWF", account: "10102135202329320", status: "Active", results: 263, cpc: 0.40, type: "Link Clicks" },
-            { name: "LACF ââ¨ The city's greatest coffee", event: "LACF", account: "10102135202329320", status: "Active", results: 1403, cpc: 0.11, type: "Link Clicks" },
-            { name: "DCWF Who do you want to see there?", event: "DCWF", account: "10102135202329320", status: "Active", results: 1666, cpc: 0.50, type: "Link Clicks" },
-            { name: "LACF Can't wait for the LA Coffee", event: "LACF", account: "10102135202329320", status: "Active", results: 2183, cpc: 0.22, type: "Link Clicks" },
-            { name: "LACF The Best Coffee in LA, All Under", event: "LACF", account: "10102135202329320", status: "Active", results: 459, cpc: 0.26, type: "Link Clicks" },
-            { name: "LACF Love âï¸ as much as we do?", event: "LACF", account: "10102135202329320", status: "Active", results: 574, cpc: 0.21, type: "Link Clicks" },
-            { name: "LACF So much coffee! So much fun! ð¤©ðï¸", event: "LACF", account: "10102135202329320", status: "Active", results: 676, cpc: 0.18, type: "Link Clicks" },
-            { name: "PWF Philly wine Who do you want to see there?", event: "PWF", account: "10102135202329320", status: "Active", results: 1023, cpc: 0.24, type: "Link Clicks" },
-            { name: "PWF Philly Wine Fest is always a fun", event: "PWF", account: "10102135202329320", status: "Active", results: 386, cpc: 0.31, type: "Link Clicks" },
-            { name: "PWF ððï¸ Philly Wine Fest : Spring", event: "PWF", account: "10102135202329320", status: "Active", results: 519, cpc: 0.23, type: "Link Clicks" },
-            { name: "DMR DC's #1 margarita partyð¹ 15 of", event: "DMR", account: "10102135202329320", status: "Active", results: 753, cpc: 0.32, type: "Link Clicks" },
-            { name: "NMR The Official NYC Margarita Rumble", event: "NMR", account: "10102135202329320", status: "Active", results: 537, cpc: 0.22, type: "Link Clicks" },
-            { name: "NMR NYC Rumble We can't wait to find out", event: "NMR", account: "10102135202329320", status: "Active", results: 300, cpc: 0.40, type: "Link Clicks" },
+// ============================================================
+// LIVE DATA FETCH — Direct from Meta Graph API
+// ============================================================
+const META_TOKEN = "EAAVZAa8iBrw4BRCirfXfXWF7ZAxaiUiFW1vAmqxYX8fzBMWjrxshSOqPZCuLcPOgCUzyzPeI2fmIRzx1PpqbEXN98FalQ0HHSooeeZBSbYE9oGUknmklTJRrGDRQPoIEWrxnooZBUECoN1SQPJNSpFxuBFLOKEqCfdR1Oy0sZCUZCP00kwU45DO9ZAdyNre2DAZDZD";
+const AD_ACCOUNTS = [
+  { id: "act_10102135202329320", label: "Link Clicks" },
+  { id: "act_22128519", label: "Video Views" }
+];
+const GRAPH = "https://graph.facebook.com/v19.0";
+let liveData = null;
+let dataStatus = "loading";
 
-            // Account 2: 22128519
-            { name: "Dallas So much coffee ð¤©So much fun ð", event: "DACF", account: "22128519", status: "Active", results: null, cpc: 0.65, type: "Video Views" },
-            { name: "The Official Dallas Coffee", event: "DACF", account: "22128519", status: "Active", results: null, cpc: 0.56, type: "Video Views" },
-            { name: "Dallas Unmatched, happy energy ðâ¤ï¸", event: "DACF", account: "22128519", status: "Active", results: null, cpc: 0.54, type: "Video Views" },
-            { name: "Dallas âï¸ðâ¨", event: "DACF", account: "22128519", status: "Active", results: 191, cpc: 0.34, type: "Video Views" },
-            { name: "Dallas So much coffee ð¤©So much fun ð (v2)", event: "DACF", account: "22128519", status: "Active", results: null, cpc: 0.58, type: "Video Views" },
-            { name: "Dallas Always better when we're", event: "DACF", account: "22128519", status: "Active", results: 922, cpc: 0.41, type: "Video Views" },
-            { name: "Philly's biggest cocktail tasting", event: "PCF", account: "22128519", status: "Active", results: 146, cpc: 0.33, type: "Video Views" },
-            { name: "philly Great cocktails. Great", event: "PCF", account: "22128519", status: "Active", results: 173, cpc: 0.28, type: "Video Views" },
-            { name: "philly Pouring up a good one for you â¤ï¸ð¸", event: "PCF", account: "22128519", status: "Active", results: 302, cpc: 0.16, type: "Video Views" },
-            { name: "Dallas ââ¨ The city's greatest coffee", event: "DACF", account: "22128519", status: "Active", results: 4767, cpc: 0.16, type: "Video Views" },
-            { name: "Dallas's coffee community âï¸âð¥", event: "DACF", account: "22128519", status: "Active", results: 570, cpc: 0.59, type: "Video Views" },
-            { name: "The Official Philly Cocktail", event: "PCF", account: "22128519", status: "Active", results: 2485, cpc: 0.20, type: "Video Views" },
-            { name: "SDCF Assemble your coffee crew âï¸ððï¸", event: "SDCF", account: "22128519", status: "Active", results: 856, cpc: 0.17, type: "Video Views" },
-            { name: "SDCF Lots of smiles & LOTS of bags of", event: "SDCF", account: "22128519", status: "Active", results: 381, cpc: 0.16, type: "Video Views" },
-            { name: "San Diego's amazing coffee", event: "SDCF", account: "22128519", status: "Active", results: 312, cpc: 0.38, type: "Video Views" },
-        ];
+function detectEvent(name) {
+  const n = name.toUpperCase();
+  if (n.includes("LACF") || (n.includes("LA") && n.includes("COFFEE"))) return "LACF";
+  if (n.includes("DACF") || n.includes("DALLAS")) return "DACF";
+  if (n.includes("DCCF") || (n.includes("DC") && n.includes("COFFEE") && !n.includes("COCKTAIL"))) return "DCCF";
+  if (n.includes("DCWF") || (n.includes("DC") && n.includes("WINE"))) return "DCWF";
+  if (n.includes("DCCK") || (n.includes("DC") && n.includes("COCKTAIL"))) return "DCCK";
+  if (n.includes("SDCF") || n.includes("SAN DIEGO")) return "SDCF";
+  if (n.includes("NYCF") || (n.includes("NYC") && n.includes("COFFEE"))) return "NYCF";
+  if (n.includes("NMR") || (n.includes("NYC") && n.includes("MARGARITA")) || (n.includes("NYC") && n.includes("RUMBLE"))) return "NMR";
+  if (n.includes("DMR") || (n.includes("DC") && n.includes("MARGARITA")) || (n.includes("DC'S") && n.includes("MARGARITA"))) return "DMR";
+  if (n.includes("PCF") || (n.includes("PHILLY") && n.includes("COCKTAIL"))) return "PCF";
+  if (n.includes("PWF") || (n.includes("PHILLY") && n.includes("WINE"))) return "PWF";
+  if (n.includes("ACF") || n.includes("AUSTIN") || (n.includes("ATLANTA") && n.includes("COFFEE"))) return "ACF";
+  return null;
+}
 
-        const eventData = [
-            { code: "DCCF", name: "DC Coffee Festival", date: "2026-03-28", cap: 1500, sold: 1236, revenue: 69784, ticket: 56.46 },
-            { code: "PCF", name: "Philly Cocktail Fest", date: "2026-04-11", cap: 1500, sold: 453, revenue: 26161, ticket: 57.75 },
-            { code: "DACF", name: "Dallas Coffee Festival", date: "2026-04-18", cap: 1100, sold: 19, revenue: 8945, ticket: 49.00 },
-            { code: "DCWF", name: "DC Wine Fest Spring", date: "2026-04-25", cap: 2300, sold: 458, revenue: 24981, ticket: 54.55 },
-            { code: "DMR", name: "DC Margarita Rumble", date: "2026-05-09", cap: 1600, sold: 14, revenue: 769, ticket: 54.96 },
-            { code: "NMR", name: "NYC Margarita Rumble", date: "2026-05-09", cap: 900, sold: 155, revenue: 9980, ticket: 64.39 },
-            { code: "PWF", name: "Philly Wine Fest Spring", date: "2026-05-16", cap: 2300, sold: 511, revenue: 30296, ticket: 59.29 },
-            { code: "LACF", name: "LA Coffee Festival", date: "2026-05-16", cap: 1000, sold: 8, revenue: 2695, ticket: 49.00 },
-            { code: "ACF", name: "Atlanta Coffee Fest", date: "2026-05-23", cap: 800, sold: 0, revenue: 0, ticket: 49.00 },
-            { code: "SDCF", name: "San Diego Coffee Fest", date: "2026-10-10", cap: 0, sold: 0, revenue: 0, ticket: 49.00 },
-        ];
+async function fetchMetaAccount(acct) {
+  try {
+    // Get campaigns
+    const campRes = await fetch(`${GRAPH}/${acct.id}/campaigns?fields=id,name,status,objective&limit=100&access_token=${META_TOKEN}`);
+    const campData = await campRes.json();
+    if (campData.error) return { error: campData.error.message, account: acct.label, campaigns: [] };
+    const campaigns = campData.data || [];
 
-        function getAction(cpc) {
-            if (!cpc) return "HOLD";
-            if (cpc > 0.45) return "KILL";
-            if (cpc < 0.20) return "SCALE";
-            return "HOLD";
-        }
+    // Get insights (last 30 days)
+    const insRes = await fetch(`${GRAPH}/${acct.id}/insights?level=campaign&fields=campaign_id,campaign_name,impressions,clicks,spend,cpc,ctr,actions&date_preset=last_30d&limit=100&access_token=${META_TOKEN}`);
+    const insData = await insRes.json();
+    const insMap = {};
+    if (insData.data) insData.data.forEach(r => insMap[r.campaign_id] = r);
 
-        function getActionColor(action) {
-            if (action === "SCALE") return "badge-scale";
-            if (action === "KILL") return "badge-kill";
-            return "badge-hold";
-        }
-
-        function getRowClass(action) {
-            if (action === "SCALE") return "campaign-row-scale";
-            if (action === "KILL") return "campaign-row-kill";
-            return "campaign-row-hold";
-        }
-
-        function getSpend(results, cpc) {
-            if (!results || !cpc) return null;
-            return (results * cpc).toFixed(2);
-        }
-
-        function formatCurrency(val) {
-            if (val === null || val === undefined) return "-";
-            return "$" + parseFloat(val).toFixed(2);
-        }
-
-        function daysUntil(dateStr) {
-            const date = new Date(dateStr);
-            const today = new Date("2026-03-27");
-            const diff = date - today;
-            const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
-            return days > 0 ? days + " days" : "Today";
-        }
-
-        function getEventHealth(event) {
-            const sellThrough = event.cap > 0 ? (event.sold / event.cap * 100) : 0;
-            if (sellThrough > 60) return "hot";
-            if (sellThrough > 25) return "good";
-            return "warm";
-        }
-
-        function initCampaignTable() {
-            const tbody = document.getElementById("campaignTableBody");
-            tbody.innerHTML = "";
-
-            campaignData.forEach(camp => {
-                const action = getAction(camp.cpc);
-                const spend = getSpend(camp.results, camp.cpc);
-                const row = document.createElement("tr");
-                row.className = getRowClass(action);
-                row.innerHTML = `
-                    <td style="cursor:pointer;color:#3B82F6;" onclick="showCampaignDetail('${camp.name}')">${camp.name}</td>
-                    <td>${camp.event}</td>
-                    <td class="numeric">${camp.account}</td>
-                    <td class="numeric">${camp.results ? camp.results.toLocaleString() : "-"}</td>
-                    <td class="numeric">${camp.cpc ? "$" + camp.cpc.toFixed(2) : "-"}</td>
-                    <td class="numeric">${formatCurrency(spend)}</td>
-                    <td>${camp.type}</td>
-                    <td><span class="badge ${getActionColor(action)}">${action}</span></td>
-                `;
-                tbody.appendChild(row);
-            });
-        }
-
-        function initEventSummary() {
-            const grid = document.getElementById("eventGrid");
-            grid.innerHTML = "";
-
-            eventData.forEach(evt => {
-                const campaigns = campaignData.filter(c => c.event === evt.code);
-                const totalSpend = campaigns.reduce((sum, c) => {
-                    const spend = getSpend(c.results, c.cpc);
-                    return sum + (spend? parseFloat(spend) : 0);
-                }, 0);
-
-                const avgCpc = campaigns.length > 0 ? campaigns.reduce((sum, c) => sum + (c.cpc || 0), 0) / campaigns.length : 0;
-                const roas = totalSpend > 0 ? ((evt.revenue - totalSpend) / totalSpend * 100).toFixed(0) : 0;
-                const sellThrough = evt.cap > 0 ? (evt.sold / evt.cap * 100).toFixed(1) : 0;
-                const health = getEventHealth(evt);
-
-                const card = document.createElement("div");
-                card.className = "event-card";
-                card.innerHTML = `
-                    <div class="event-header">
-                        <div class="event-name">${evt.name}</div>
-                        <div class="event-health health-${health}">${health.toUpperCase()}</div>
-                    </div>
-                    <div class="event-details">
-                        <div class="event-detail">
-                            <div class="event-detail-label">Date</div>
-                            <div class="event-detail-value">${evt.date}</div>
-                        </div>
-                        <div class="event-detail">
-                            <div class="event-detail-label">Days Out</div>
-                            <div class="event-detail-value">${daysUntil(evt.date)}</div>
-                        </div>
-                        <div class="event-detail">
-                            <div class="event-detail-label">Tickets Sold</div>
-                            <div class="event-detail-value">${evt.sold.toLocaleString()} / ${evt.cap.toLocaleString()}</div>
-                        </div>
-                        <div class="event-detail">
-                            <div class="event-detail-label">Revenue</div>
-                            <div class="event-detail-value">${formatCurrency(evt.revenue)}</div>
-                        </div>
-                            <div class="event-detail">
-                            <div class="event-detail-label">Total Ad Spend</div>
-                            <div class="event-detail-value">${formatCurrency(totalSpend)}</div>
-                        </div>
-                        <div class="event-detail">
-                            <div class="event-detail-label">Campaigns</div>
-                            <div class="event-detail-value">${campaigns.length}</div>
-                        </div>
-                        <div class="event-detail">
-                            <div class="event-detail-label">Avg CPC</div>
-                            <div class="event-detail-value">${formatCurrency(avgCpc)}</div>
-                        </div>
-                        <div class="event-detail">
-                            <div class="event-detail-label">ROAS</div>
-                            <div class="event-detail-value">${roas}%</div>
-                        </div>
-                    </div>
-                    <div class="event-progress">
-                        <div class="progress-label">
-                            <span>Sell-Through</span>
-                            <span class="numeric">${sellThrough}%</span>
-                        </div>
-                        <div class="progress-bar">
-                            <div class="progress-fill" style="width: ${Math.min(sellThrough, 100)}%;"></div>
-                        </div>
-                    </div>
-                `;
-                grid.appendChild(card);
-            });
-        }
-
-        function initKillScaleMatrix() {
-            const container = document.getElementById("matrixContainer");
-            container.innerHTML = "";
-
-            const eventCampaigns = {};
-            eventData.forEach(evt => {
-                eventCampaigns[evt.code] = campaignData.filter(c => c.event === evt.code);
-            });
-
-            eventData.forEach(evt => {
-                const camps = eventCampaigns[evt.code];
-                if (camps.length === 0) return;
-
-                const title = document.createElement("div");
-                title.className = "matrix-group-title";
-                title.textContent = evt.name;
-                container.appendChild(title);
-
-                const grid = document.createElement("div");
-                grid.className = "matrix-grid";
-
-                camps.forEach(camp => {
-                    const action = getAction(camp.cpc);
-                    const matrixClass = action === "SCALE" ? "matrix-scale" : action === "KILL" ? "matrix-kill" : "matrix-hold";
-                    const cell = document.createElement("div");
-                    cell.className = `matrix-campaign ${matrixClass}`;
-                    const shortName = camp.name.length > 30 ? camp.name.substring(0, 27) + "..." : camp.name;
-                    cell.innerHTML = `<div>${shortName}</div><div>${camp.cpc ? "$" + camp.cpc.toFixed(2) : "-"}</div>`;
-                    cell.style.cursor = "pointer";
-                    cell.onclick = () => showCampaignDetail(camp.name);
-                    grid.appendChild(cell);
-                });
-
-                container.appendChild(grid);
-            });
-        }
-
-        function showTab(tabName) {
-            document.querySelectorAll(".tab-content").forEach(el => el.classList.remove("active"));
-            document.querySelectorAll(".tab-button").forEach(el => el.classList.remove("active"));
-            document.getElementById(tabName).classList.add("active");
-            event.target.classList.add("active");
-
-            if (tabName === "event-summary") initEventSummary();
-            if (tabName === "kill-scale-matrix") initKillScaleMatrix();
-        }
-
-        function filterTable() {
-            const eventFilter = document.getElementById("eventFilter").value;
-            const actionFilter = document.getElementById("actionFilter").value;
-            const searchBox = document.getElementById("searchBox").value.toLowerCase();
-
-            const tbody = document.getElementById("campaignTableBody");
-            const rows = tbody.querySelectorAll("tr");
-
-            rows.forEach(row => {
-                const cells = row.querySelectorAll("td");
-                const name = cells[0].textContent.toLowerCase();
-                const event = cells[1].textContent;
-                const action = cells[7].textContent;
-
-                let show = true;
-                if (eventFilter && event !== eventFilter) show = false;
-                if (actionFilter && !action.includes(actionFilter)) show = false;
-                if (searchBox && !name.includes(searchBox)) show = false;
-
-                row.style.display = show ? "" : "none";
-            });
-        }
-
-        function sortTable(col) {
-            const tbody = document.getElementById("campaignTableBody");
-            const rows = Array.from(tbody.querySelectorAll("tr"));
-
-            rows.sort((a, b) => {
-                const aVal = a.querySelectorAll("td")[col].textContent;
-                const bVal = b.querySelectorAll("td")[col].textContent;
-
-                const aNum = parseFloat(aVal.replace(/[$,]/g, "")) || aVal;
-                const bNum = parseFloat(bVal.replace(/[$,]/g, "")) || bVal;
-
-                if (!isNaN(aNum) && !isNaN(bNum)) return aNum - bNum;
-                return aVal.localeCompare(bVal);
-            });
-
-            tbody.innerHTML = "";
-            rows.forEach(row => tbody.appendChild(row));
-        }
-
-        function showCampaignDetail(campaignName) {
-            const camp = campaignData.find(c => c.name === campaignName);
-            if (!camp) return;
-
-            const evt = eventData.find(e => e.code === camp.event);
-            const action = getAction(camp.cpc);
-            const spend = getSpend(camp.results, camp.cpc);
-
-            const modal = document.getElementById("campaignModal");
-            document.getElementById("modalTitle").textContent = camp.name;
-
-            let recommendationClass = "recommendation " + action.toLowerCase();
-            let recommendationText = action === "SCALE" ? "â SCALE: Low CPC, high performance" :
-                                     action === "KILL" ? "â KILL: High CPC, needs optimization" :
-                                     "â HOLD: Steady performance";
-
-            document.getElementById("modalBody").innerHTML = `
-                <div class="modal-detail-grid">
-                    <div class="modal-detail-item">
-                        <div class="modal-detail-label">Event</div>
-                        <div class="modal-detail-value">${evt?.name || camp.event}</div>
-                    </div>
-                    <div class="modal-detail-item">
-                        <div class="modal-detail-label">Account</div>
-                        <div class="modal-detail-value">${camp.account}</div>
-                    </div>
-                    <div class="modal-detail-item">
-                        <div class="modal-detail-label">Status</div>
-                        <div class="modal-detail-value">${camp.status}</div>
-                    </div>
-                    <div class="modal-detail-item">
-                        <div class="modal-detail-label">Type</div>
-                        <div class="modal-detail-value">${camp.type}</div>
-                    </div>
-                    <div class="modal-detail-item">
-                        <div class="modal-detail-label">Results</div>
-                        <div class="modal-detail-value">${camp.results ? camp.results.toLocaleString() : "-"}</div>
-                    </div>
-                    <div class="modal-detail-item">
-                        <div class="modal-detail-label">CPC/CPV</div>
-                        <div class="modal-detail-value">${camp.cpc ? "$" + camp.cpc.toFixed(2) : "-"}</div>
-                    </div>
-                    <div class="modal-detail-item">
-                        <div class="modal-detail-label">Est. Spend</div>
-                        <div class="modal-detail-value">${formatCurrency(spend)}</div>
-                    </div>
-                </div>
-                <div class="${recommendationClass}">${recommendationText}</div>
-            `;
-
-            modal.classList.add("show");
-        }
-
-        function closeModal() {
-            document.getElementById("campaignModal").classList.remove("show");
-        }
-
-        function exportCSV() {
-            let csv = "Campaign Name,Event,Account,Results,CPC/CPV,Est. Spend,Type,Action\n";
-            campaignData.forEach(camp => {
-                const action = getAction(camp.cpc);
-                const spend = getSpend(camp.results, camp.cpc);
-                csv += `"${camp.name}","${camp.event}","${camp.account}","${camp.results || "-"}","${camp.cpc || "-"}","${spend || "-"}","${camp.type}","${action}"\n`;
-            });
-
-            const blob = new Blob([csv], { type: "text/csv" });
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement("a");
-            a.href = url;
-            a.download = "metaadspro-campaigns.csv";
-            a.click();
-        }
-
-        window.onclick = (event) => {
-            const modal = document.getElementById("campaignModal");
-            if (event.target === modal) modal.classList.remove("show");
+    return {
+      account: acct.label,
+      campaigns: campaigns.map(c => {
+        const ins = insMap[c.id] || {};
+        const linkClicks = ins.actions ? ins.actions.find(a => a.action_type === "link_click") : null;
+        return {
+          id: c.id,
+          name: c.name || ins.campaign_name,
+          status: c.status,
+          event: detectEvent(c.name),
+          impressions: parseInt(ins.impressions) || 0,
+          clicks: parseInt(ins.clicks) || 0,
+          linkClicks: linkClicks ? parseInt(linkClicks.value) : 0,
+          spend: parseFloat(ins.spend) || 0,
+          cpc: ins.cpc ? parseFloat(ins.cpc) : null,
+          account: acct.label
         };
+      })
+    };
+  } catch (e) {
+    return { error: e.message, account: acct.label, campaigns: [] };
+  }
+}
 
-        // Initialize on load
-        document.addEventListener("DOMContentLoaded", () => {
-            initCampaignTable();
+async function fetchLiveData() {
+  try {
+    const statusEl = document.querySelector(".updated-text");
+    if (statusEl) statusEl.textContent = "Fetching live data from Meta...";
+
+    const [acct1, acct2] = await Promise.all(AD_ACCOUNTS.map(fetchMetaAccount));
+    const allCampaigns = [...acct1.campaigns, ...acct2.campaigns];
+
+    if (allCampaigns.length === 0 && (acct1.error || acct2.error)) {
+      throw new Error(acct1.error || acct2.error);
+    }
+
+    // Update CAMPAIGNS from live data
+    if (allCampaigns.length > 0) {
+      CAMPAIGNS.length = 0;
+      allCampaigns.forEach(c => {
+        CAMPAIGNS.push({
+          id: c.id,
+          name: c.name,
+          event: c.event || "UNKNOWN",
+          results: c.linkClicks || c.clicks || null,
+          cpc: c.cpc,
+          spend: c.spend || 0,
+          impressions: c.impressions || 0,
+          clicks: c.clicks || 0,
+          status: c.status,
+          account: c.account
         });
-    </script>
+      });
+    }
+
+    // Build per-event aggregates
+    const eventAgg = {};
+    allCampaigns.forEach(c => {
+      if (!c.event) return;
+      if (!eventAgg[c.event]) eventAgg[c.event] = { totalSpend:0, totalClicks:0, totalImpressions:0, campaignCount:0, activeCampaigns:0 };
+      const a = eventAgg[c.event];
+      a.totalSpend += c.spend;
+      a.totalClicks += c.linkClicks || c.clicks;
+      a.totalImpressions += c.impressions;
+      a.campaignCount++;
+      if (c.status === "ACTIVE") a.activeCampaigns++;
+    });
+
+    // Update EVENTS with live ad aggregates
+    Object.entries(eventAgg).forEach(([key, agg]) => {
+      if (EVENTS[key]) {
+        EVENTS[key].liveSpend = agg.totalSpend;
+        EVENTS[key].liveClicks = agg.totalClicks;
+        EVENTS[key].liveImpressions = agg.totalImpressions;
+        EVENTS[key].activeCampaigns = agg.activeCampaigns;
+        EVENTS[key].campaignCount = agg.campaignCount;
+      }
+    });
+
+    dataStatus = "live";
+    const ts = new Date().toLocaleString();
+    if (statusEl) statusEl.innerHTML = `<span style="color:var(--green)">&#9679;</span> Live &middot; ${ts}`;
+    document.querySelector(".header-badge").textContent = `${CAMPAIGNS.length} CAMPAIGNS`;
+
+    const totalSpend = allCampaigns.reduce((s,c)=>s+c.spend,0);
+    const activeCt = allCampaigns.filter(c=>c.status==="ACTIVE").length;
+    console.log(`MetaAdsPro: Loaded ${allCampaigns.length} campaigns (${activeCt} active), $${totalSpend.toFixed(2)} spend`);
+    if (acct1.error) console.warn("Account 1:", acct1.error);
+    if (acct2.error) console.warn("Account 2:", acct2.error);
+
+    return true;
+  } catch (err) {
+    console.warn("Live data fetch failed:", err.message);
+    dataStatus = "fallback";
+    const statusEl = document.querySelector(".updated-text");
+    if (statusEl) statusEl.innerHTML = `<span style="color:var(--yellow)">&#9679;</span> Offline &middot; Using cached data`;
+    return false;
+  }
+}
+
+// ============================================================
+// INIT
+// ============================================================
+async function init() {
+  await fetchLiveData();
+  buildEventFilter();
+  renderKPIs();
+  renderTable();
+  renderEventSummary();
+  renderMatrix();
+  renderTrackingSetup();
+
+  // Auto-refresh every 5 minutes
+  setInterval(async () => {
+    await fetchLiveData();
+    renderKPIs();
+    renderTable();
+    renderEventSummary();
+    renderMatrix();
+  }, 5 * 60 * 1000);
+}
+init();
+</script>
 </body>
 </html>
