@@ -280,7 +280,7 @@ tr.event-group-header td .eb-link svg{width:13px;height:13px;vertical-align:-2px
 // ============================================================
 // DATA
 // ============================================================
-const TODAY = new Date(2026, 2, 27); // Mar 27 2026
+const TODAY = new Date(2026, 3, 6); // Apr 6 2026
 
 // Pixel status: "none" | "needs_setup" | "installed" | "verified"
 // CAPI status: "none" | "needs_token" | "active" | "verified"
@@ -296,7 +296,10 @@ const EVENTS = {
   PCF:  { name:"Philly Cocktail Fest", abbr:"PCF", eid:"1334838139809", date:new Date(2026,3,18), sold:457, cap:1500, gross:26362, site:"eventbrite", sqSite:"pug-mandolin-c4t2", pixelId:"916783467637276", pixelStatus:"active", capiStatus:"active", sqPixel:true },
   SDCF: { name:"San Diego Coffee Festival", abbr:"SDCF", eid:"1976519304446", date:new Date(2026,5,6), sold:0, cap:0, gross:0, site:"eventbrite", sqSite:"bison-grasshopper-8en3", pixelId:"26387886817531523", pixelStatus:"active", capiStatus:"active", sqPixel:true },
   NYCF: { name:"NYC Coffee Festival", abbr:"NYCF", eid:"1754410953389", date:new Date(2026,9,3), sold:3, cap:1199, gross:95, site:"eventbrite", sqSite:"cinnamon-horse-3s68", pixelId:"1415803390292369", pixelStatus:"active", capiStatus:"active", sqPixel:true },
-  DCCK: { name:"The Official DC Cocktail Festival", abbr:"DCCK", eid:"1334045428789", date:new Date(2026,4,30), sold:1252, cap:1500, gross:70872, site:"eventbrite", sqSite:"taylor-conlin-5r10", pixelId:"940990865086582", pixelStatus:"active", capiStatus:"active", sqPixel:true }
+  DCCK: { name:"The Official DC Cocktail Festival", abbr:"DCCK", eid:"1334045428789", date:new Date(2026,4,30), sold:1252, cap:1500, gross:70872, site:"eventbrite", sqSite:"taylor-conlin-5r10", pixelId:"940990865086582", pixelStatus:"active", capiStatus:"active", sqPixel:true },
+  PhCF: { name:"Philly Coffee Festival", abbr:"PhCF", eid:"1976675236844", date:new Date(2026,9,17), sold:23, cap:1430, gross:865, site:"eventbrite", sqSite:"alligator-olive-e4gn", pixelId:"1894383624578532", pixelStatus:"active", capiStatus:"active", sqPixel:true },
+  SeaCF:{ name:"Seattle Coffee Festival", abbr:"SeaCF", eid:null, date:null, sold:0, cap:0, gross:0, site:"eventbrite", sqSite:"bulldog-violin-d64j", pixelId:"940535198772785", pixelStatus:"active", capiStatus:"none", sqPixel:true },
+  SFCF: { name:"SF Coffee Festival", abbr:"SFCF", eid:null, date:new Date(2026,10,7), sold:0, cap:0, gross:0, site:"eventbrite", sqSite:"sam-gelin-e2xb", pixelId:"819367473968869", pixelStatus:"active", capiStatus:"none", sqPixel:true }
 };
 
 const CAMPAIGNS = [
@@ -761,10 +764,10 @@ function renderTrackingSetup(){
   const hasAnyPixel = pixelDone > 0;
   const hasAnyCapi = capiDone > 0;
   const steps = [
-    {done:true, text:"Create one Meta Pixel per event in Meta Events Manager (Business Settings &rarr; Data Sources &rarr; Pixels) &mdash; <strong>12/12 done</strong>"},
-    {done:true, text:"Install each pixel on its corresponding Squarespace site (Code Injection &rarr; Header) &mdash; <strong>12/12 done</strong> (NMR/DMR share site w/ conditional routing)"},
-    {done:true, text:"Set dedicated per-event pixel on each Eventbrite event (Tracking &rarr; Meta Pixel) &mdash; <strong>11/11 Eventbrite events done</strong>"},
-    {done:true, text:"Enable server-side CAPI on each Eventbrite event with access token &mdash; <strong>11/11 Eventbrite events done</strong>"},
+    {done:true, text:"Create one Meta Pixel per event in Meta Events Manager (Business Settings &rarr; Data Sources &rarr; Pixels) &mdash; <strong>15/15 done</strong>"},
+    {done:true, text:"Install each pixel on its corresponding Squarespace site (Code Injection &rarr; Header) &mdash; <strong>15/15 done</strong> (NMR/DMR share site w/ conditional routing)"},
+    {done:true, text:"Set dedicated per-event pixel on each Eventbrite event (Tracking &rarr; Meta Pixel) &mdash; <strong>12/12 Eventbrite events done</strong> (SeaCF &amp; SFCF pending EB event creation)"},
+    {done:true, text:"Enable server-side CAPI on each Eventbrite event with access token &mdash; <strong>12/12 Eventbrite events done</strong> (SeaCF &amp; SFCF pending EB event creation)"},
     {done:true, text:"Generate Meta CAPI access token via Events Manager &mdash; <strong>Done (business-level token)</strong>"},
     {done:false, text:"Verify pixels fire correctly using Meta Pixel Helper Chrome extension"},
     {done:false, text:"Confirm CAPI events appear in Meta Events Manager &rarr; Test Events tab"},
@@ -848,6 +851,9 @@ function detectEvent(name) {
   if (n.includes("PCF") || (n.includes("PHILLY") && n.includes("COCKTAIL"))) return "PCF";
   if (n.includes("PWF") || (n.includes("PHILLY") && n.includes("WINE"))) return "PWF";
   if (n.includes("ACF") || n.includes("AUSTIN") || (n.includes("ATLANTA") && n.includes("COFFEE"))) return "ACF";
+  if (n.includes("PHCF") || (n.includes("PHILLY") && n.includes("COFFEE") && !n.includes("COCKTAIL"))) return "PhCF";
+  if (n.includes("SEACF") || (n.includes("SEATTLE") && n.includes("COFFEE"))) return "SeaCF";
+  if (n.includes("SFCF") || (n.includes("SF") && n.includes("COFFEE")) || (n.includes("SAN FRANCISCO") && n.includes("COFFEE"))) return "SFCF";
   return null;
 }
 
