@@ -298,12 +298,12 @@ const EVENTS = {
   NYCF: { name:"NYC Coffee Festival", abbr:"NYCF", eid:"1754410953389", date:new Date(2026,9,3), sold:3, cap:1199, gross:95, site:"eventbrite", sqSite:"cinnamon-horse-3s68", pixelId:"1415803390292369", pixelStatus:"active", capiStatus:"active", sqPixel:true },
   DCCK: { name:"The Official DC Cocktail Festival", abbr:"DCCK", eid:"1334045428789", date:new Date(2026,4,30), sold:1252, cap:1500, gross:70872, site:"eventbrite", sqSite:"taylor-conlin-5r10", pixelId:"940990865086582", pixelStatus:"active", capiStatus:"active", sqPixel:true },
   PhCF: { name:"Philly Coffee Festival", abbr:"PhCF", eid:"1976675236844", date:new Date(2026,9,17), sold:23, cap:1430, gross:865, site:"eventbrite", sqSite:"alligator-olive-e4gn", pixelId:"1894383624578532", pixelStatus:"active", capiStatus:"active", sqPixel:true },
-  SeaCF:{ name:"Seattle Coffee Festival", abbr:"SeaCF", eid:null, date:null, sold:0, cap:0, gross:0, site:"eventbrite", sqSite:"bulldog-violin-d64j", pixelId:"940535198772785", pixelStatus:"active", capiStatus:"none", sqPixel:true },
-  SFCF: { name:"SF Coffee Festival", abbr:"SFCF", eid:null, date:new Date(2026,10,7), sold:0, cap:0, gross:0, site:"eventbrite", sqSite:"sam-gelin-e2xb", pixelId:"819367473968869", pixelStatus:"active", capiStatus:"none", sqPixel:true }
+  SeaCF:{ name:"Seattle Coffee Festival", abbr:"SeaCF", eid:"1976544126690", date:new Date(2026,9,24), sold:41, cap:2480, gross:1490, site:"eventbrite", sqSite:"bulldog-violin-d64j", pixelId:"940535198772785", pixelStatus:"active", capiStatus:"active", sqPixel:true },
+  SFCF: { name:"SF Coffee Festival", abbr:"SFCF", eid:"1977403519156", date:new Date(2026,10,7), sold:89, cap:11170, gross:4483, site:"eventbrite", sqSite:"sam-gelin-e2xb", pixelId:"819367473968869", pixelStatus:"active", capiStatus:"active", sqPixel:true }
 };
 
 const CAMPAIGNS = [
-  // Account 1 – Link Clicks
+  // Account 1 â Link Clicks
   {id:1, name:"ACF \u2764\uFE0F\u2615\uFE0F\uD83C\uDF89", event:"ACF", results:null, cpc:0.23, account:"Link Clicks"},
   {id:2, name:"DCCF \u2615\uFE0F Finding your new fav coffee", event:"DCCF", results:null, cpc:0.13, account:"Link Clicks"},
   {id:3, name:"DCWF \uD83D\uDC6F\u200D\u2640\uFE0F\uD83C\uDF77 Besties + bottomless wine", event:"DCWF", results:null, cpc:null, account:"Link Clicks"},
@@ -321,7 +321,7 @@ const CAMPAIGNS = [
   {id:15, name:"DMR DC\u2019s #1 margarita party\uD83C\uDF79 15 of", event:"DMR", results:753, cpc:0.32, account:"Link Clicks"},
   {id:16, name:"NMR The Official NYC Margarita Rumble", event:"NMR", results:537, cpc:0.22, account:"Link Clicks"},
   {id:17, name:"NMR NYC Rumble We can\u2019t wait to find out", event:"NMR", results:300, cpc:0.40, account:"Link Clicks"},
-  // Account 2 – Video Views
+  // Account 2 â Video Views
   {id:18, name:"Dallas So much coffee \uD83E\uDD29So much fun \uD83C\uDF89", event:"DACF", results:null, cpc:0.65, account:"Video Views"},
   {id:19, name:"The Official Dallas Coffee", event:"DACF", results:null, cpc:0.56, account:"Video Views"},
   {id:20, name:"Dallas Unmatched, happy energy \uD83D\uDE01\u2764\uFE0F", event:"DACF", results:null, cpc:0.54, account:"Video Views"},
@@ -529,7 +529,7 @@ function renderTable(){
     rows.forEach(c=>{
       const action = getAction(c.cpc);
       const statusColor = c.status==="ACTIVE"?"var(--green)":c.status==="PAUSED"?"var(--yellow)":"var(--text-dim)";
-      const statusLabel = c.status==="ACTIVE"?"ACTIVE":c.status==="PAUSED"?"PAUSED":c.status||"—";
+      const statusLabel = c.status==="ACTIVE"?"ACTIVE":c.status==="PAUSED"?"PAUSED":c.status||"â";
       html += `<tr class="campaign-row" onclick="openModal('${c.id}')">
         <td><span class="campaign-name" title="${(c.name||'').replace(/"/g,'&quot;')}">${c.name}</span></td>
         <td style="color:var(--text-muted)">${ev.abbr}</td>
@@ -750,7 +750,7 @@ function renderTrackingSetup(){
     const daysColor = days!=null?(days<=14?"var(--red)":days<=30?"var(--yellow)":"var(--text-muted)"):"var(--text-dim)";
     rows += `<tr>
       <td style="font-weight:500">${ev.name} <span style="color:var(--text-dim);font-size:.7rem">(${ev.abbr})</span></td>
-      <td>${ev.sqSite?`<a href="https://${ev.sqSite}.squarespace.com/config/pages/website-tools/code-injection" target="_blank" style="font-size:.72rem">${ev.sqSite}</a>`:'<span style="color:var(--text-dim);font-size:.72rem">—</span>'}</td>
+      <td>${ev.sqSite?`<a href="https://${ev.sqSite}.squarespace.com/config/pages/website-tools/code-injection" target="_blank" style="font-size:.72rem">${ev.sqSite}</a>`:'<span style="color:var(--text-dim);font-size:.72rem">â</span>'}</td>
       <td>${pixelBadge(ev.pixelStatus)} ${ev.sqPixel?'<span class="status-badge status-active" style="font-size:.6rem">SQ</span>':''}</td>
       <td class="mono" style="font-size:.72rem;color:var(--text-dim)">${ev.pixelId||"\u2014"}</td>
       <td>${capiBadge(ev.capiStatus)}</td>
@@ -766,8 +766,8 @@ function renderTrackingSetup(){
   const steps = [
     {done:true, text:"Create one Meta Pixel per event in Meta Events Manager (Business Settings &rarr; Data Sources &rarr; Pixels) &mdash; <strong>15/15 done</strong>"},
     {done:true, text:"Install each pixel on its corresponding Squarespace site (Code Injection &rarr; Header) &mdash; <strong>15/15 done</strong> (NMR/DMR share site w/ conditional routing)"},
-    {done:true, text:"Set dedicated per-event pixel on each Eventbrite event (Tracking &rarr; Meta Pixel) &mdash; <strong>12/12 Eventbrite events done</strong> (SeaCF &amp; SFCF pending EB event creation)"},
-    {done:true, text:"Enable server-side CAPI on each Eventbrite event with access token &mdash; <strong>12/12 Eventbrite events done</strong> (SeaCF &amp; SFCF pending EB event creation)"},
+    {done:true, text:"Set dedicated per-event pixel on each Eventbrite event (Tracking &rarr; Meta Pixel) &mdash; <strong>15/15 Eventbrite events done</strong>"},
+    {done:true, text:"Enable server-side CAPI on each Eventbrite event with access token &mdash; <strong>15/15 Eventbrite events done</strong>"},
     {done:true, text:"Generate Meta CAPI access token via Events Manager &mdash; <strong>Done (business-level token)</strong>"},
     {done:false, text:"Verify pixels fire correctly using Meta Pixel Helper Chrome extension"},
     {done:false, text:"Confirm CAPI events appear in Meta Events Manager &rarr; Test Events tab"},
@@ -826,7 +826,7 @@ function closeModal(){document.getElementById("modalOverlay").classList.remove("
 document.addEventListener("keydown",e=>{if(e.key==="Escape")closeModal()});
 
 // ============================================================
-// LIVE DATA FETCH — Direct from Meta Graph API
+// LIVE DATA FETCH â Direct from Meta Graph API
 // ============================================================
 const META_TOKEN = "EAAc6w07mepgBREoZBZAzxMAetihVQXZAILLnvJp9I4ZCjlAmQ8srEeYGqV5cFIFleP9sUpEAkBRHd2P5KWNLzn4nPEw9mK92q4T8L8XhaVfKEfLHPB2vRxAiYMZCI2zQvGm4zRKKCcEEL2DBZBxZAevPG1eZANwBh9Vsg0aIXNSZBntGfkZBllGyzTrlupf6wNZBAZDZD";
 const AD_ACCOUNTS = [
