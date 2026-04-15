@@ -408,18 +408,21 @@ function getEventAggregates(){
 // EVENT ORDER (sorted by date, nulls last)
 // Past events are filtered out so old events drop off (fixes Issue #2)
 // ============================================================
-const EVENT_ORDER = Object.keys(EVENTS).filter(k=>{
-  const d = EVENTS[k].date;
-  if(!d) return true; // keep TBD/null-date events
-  // Keep event on its day; drop the day after it ends
-  return d.getTime() >= TODAY.getTime();
-}).sort((a,b)=>{
-  const da=EVENTS[a].date, db=EVENTS[b].date;
-  if(!da && !db) return 0;
-  if(!da) return 1;
-  if(!db) return -1;
-  return da-db;
-});
+function computeEventOrder(){
+  return Object.keys(EVENTS).filter(k=>{
+    const d = EVENTS[k].date;
+    if(!d) return true; // keep TBD/null-date events
+    // Drop the day after the event ends
+    return d.getTime() >= TODAY.getTime();
+  }).sort((a,b)=>{
+    const da=EVENTS[a].date, db=EVENTS[b].date;
+    if(!da && !db) return 0;
+    if(!da) return 1;
+    if(!db) return -1;
+    return da-db;
+  });
+}
+let EVENT_ORDER = computeEventOrder();
 
 // ============================================================
 // TABS
@@ -841,8 +844,51 @@ const AD_ACCOUNTS = [
   { id: "act_22128519", label: "Video Views" }
 ];
 const GRAPH = "https://graph.facebook.com/v19.0";
+const EB_TOKEN = "5ELTZPKMCLLPXSEMC4LH";
+const EB_API = "https://www.eventbriteapi.com/v3";
 let liveData = null;
 let dataStatus = "loading";
+
+// Pull live event date / sold / capacity / gross from Eventbrite (fixes Issues #1 & #2)
+async function fetchEventbriteOne(key){
+  const ev = EVENTS[key];
+  if(!ev || !ev.eid) return;
+  try {
+    const [evRes, tcRes] = await Promise.all([
+      fetch(`${EB_API}/events/${ev.eid}/?token=${EB_TOKEN}`).then(r=>r.json()),
+      fetch(`${EB_API}/events/${ev.eid}/ticket_classes/?token=${EB_TOKEN}`).then(r=>r.json())
+    ]);
+    if(evRes && evRes.start && evRes.start.local){
+      // Parse "YYYY-MM-DDTHH:mm:ss" as local
+      const [d] = evRes.start.local.split("T");
+      const [y,m,day] = d.split("-").map(Number);
+      ev.date = new Date(y, m-1, day);
+    }
+    if(evRes && typeof evRes.capacity === "number") ev.cap = evRes.capacity;
+    if(tcRes && Array.isArray(tcRes.ticket_classes)){
+      let sold = 0, gross = 0, cap = 0;
+      tcRes.ticket_classes.forEach(t => {
+        const qs = t.quantity_sold || 0;
+        const qt = t.quantity_total || 0;
+        const cost = t.cost ? parseFloat(t.cost.major_value || 0) : 0;
+        sold += qs;
+        gross += qs * cost;
+        cap += qt;
+      });
+      ev.sold = sold;
+      ev.gross = Math.round(gross);
+      if(cap > 0) ev.cap = cap;
+    }
+  } catch(e){
+    console.warn("Eventbrite fetch failed for", key, e.message);
+  }
+}
+
+async function fetchEventbriteAll(){
+  const keys = Object.keys(EVENTS).filter(k => EVENTS[k].eid);
+  await Promise.all(keys.map(fetchEventbriteOne));
+  EVENT_ORDER = computeEventOrder();
+}
 
 function detectEvent(name) {
   if(!name) return null;
@@ -1016,7 +1062,7 @@ async function fetchLiveData() {
 // INIT
 // ============================================================
 async function init() {
-  await fetchLiveData();
+  await Promise.all([fetchLiveData(), fetchEventbriteAll()]);
   buildEventFilter();
   renderKPIs();
   renderTable();
@@ -1026,11 +1072,12 @@ async function init() {
 
   // Auto-refresh every 5 minutes
   setInterval(async () => {
-    await fetchLiveData();
+    await Promise.all([fetchLiveData(), fetchEventbriteAll()]);
     renderKPIs();
     renderTable();
     renderEventSummary();
     renderMatrix();
+    renderTrackingSetup();
   }, 5 * 60 * 1000);
 }
 init();
