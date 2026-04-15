@@ -280,7 +280,8 @@ tr.event-group-header td .eb-link svg{width:13px;height:13px;vertical-align:-2px
 // ============================================================
 // DATA
 // ============================================================
-const TODAY = new Date(2026, 3, 6); // Apr 6 2026
+// Use today's actual date so "days out" stays accurate over time (fixes Issue #3)
+const TODAY = (() => { const d = new Date(); d.setHours(0,0,0,0); return d; })();
 
 // Pixel status: "none" | "needs_setup" | "installed" | "verified"
 // CAPI status: "none" | "needs_token" | "active" | "verified"
@@ -405,8 +406,14 @@ function getEventAggregates(){
 
 // ============================================================
 // EVENT ORDER (sorted by date, nulls last)
+// Past events are filtered out so old events drop off (fixes Issue #2)
 // ============================================================
-const EVENT_ORDER = Object.keys(EVENTS).sort((a,b)=>{
+const EVENT_ORDER = Object.keys(EVENTS).filter(k=>{
+  const d = EVENTS[k].date;
+  if(!d) return true; // keep TBD/null-date events
+  // Keep event on its day; drop the day after it ends
+  return d.getTime() >= TODAY.getTime();
+}).sort((a,b)=>{
   const da=EVENTS[a].date, db=EVENTS[b].date;
   if(!da && !db) return 0;
   if(!da) return 1;
@@ -838,23 +845,46 @@ let liveData = null;
 let dataStatus = "loading";
 
 function detectEvent(name) {
+  if(!name) return null;
   const n = name.toUpperCase();
-  if (n.includes("LACF") || (n.includes("LA") && n.includes("COFFEE"))) return "LACF";
+  // Check most-specific city tokens FIRST, using word boundaries on short tokens like "LA" / "SF" / "DC"
+  // so "DALLAS" no longer matches "LA" (fixes Issue #4)
+  const hasWord = w => new RegExp(`\\b${w}\\b`).test(n);
+
   if (n.includes("DACF") || n.includes("DALLAS")) return "DACF";
-  if (n.includes("DCCF") || (n.includes("DC") && n.includes("COFFEE") && !n.includes("COCKTAIL"))) return "DCCF";
-  if (n.includes("DCWF") || (n.includes("DC") && n.includes("WINE"))) return "DCWF";
-  if (n.includes("DCCK") || (n.includes("DC") && n.includes("COCKTAIL"))) return "DCCK";
+  if (n.includes("LACF") || (hasWord("LA") && n.includes("COFFEE"))) return "LACF";
   if (n.includes("SDCF") || n.includes("SAN DIEGO")) return "SDCF";
-  if (n.includes("NYCF") || (n.includes("NYC") && n.includes("COFFEE"))) return "NYCF";
-  if (n.includes("NMR") || (n.includes("NYC") && n.includes("MARGARITA")) || (n.includes("NYC") && n.includes("RUMBLE"))) return "NMR";
-  if (n.includes("DMR") || (n.includes("DC") && n.includes("MARGARITA")) || (n.includes("DC'S") && n.includes("MARGARITA"))) return "DMR";
-  if (n.includes("PCF") || (n.includes("PHILLY") && n.includes("COCKTAIL"))) return "PCF";
-  if (n.includes("PWF") || (n.includes("PHILLY") && n.includes("WINE"))) return "PWF";
-  if (n.includes("ACF") || n.includes("AUSTIN") || (n.includes("ATLANTA") && n.includes("COFFEE"))) return "ACF";
-  if (n.includes("PHCF") || (n.includes("PHILLY") && n.includes("COFFEE") && !n.includes("COCKTAIL"))) return "PhCF";
   if (n.includes("SEACF") || (n.includes("SEATTLE") && n.includes("COFFEE"))) return "SeaCF";
-  if (n.includes("SFCF") || (n.includes("SF") && n.includes("COFFEE")) || (n.includes("SAN FRANCISCO") && n.includes("COFFEE"))) return "SFCF";
+  if (n.includes("SFCF") || (hasWord("SF") && n.includes("COFFEE")) || (n.includes("SAN FRANCISCO") && n.includes("COFFEE"))) return "SFCF";
+  if (n.includes("NYCF") || (n.includes("NYC") && n.includes("COFFEE"))) return "NYCF";
+  if (n.includes("NMR") || (n.includes("NYC") && (n.includes("MARGARITA") || n.includes("RUMBLE")))) return "NMR";
+  if (n.includes("DCCF") || (hasWord("DC") && n.includes("COFFEE") && !n.includes("COCKTAIL"))) return "DCCF";
+  if (n.includes("DCWF") || (hasWord("DC") && n.includes("WINE"))) return "DCWF";
+  if (n.includes("DCCK") || (hasWord("DC") && n.includes("COCKTAIL"))) return "DCCK";
+  if (n.includes("DMR") || (hasWord("DC") && n.includes("MARGARITA")) || (n.includes("DC'S") && n.includes("MARGARITA"))) return "DMR";
+  // Philly Coffee must be checked BEFORE Philly Cocktail/PCF so PHCF isn't swallowed by the "PCF" substring
+  if (n.includes("PHCF") || (n.includes("PHILLY") && n.includes("COFFEE") && !n.includes("COCKTAIL"))) return "PhCF";
+  if ((n.includes("PCF") && !n.includes("PHCF")) || (n.includes("PHILLY") && n.includes("COCKTAIL"))) return "PCF";
+  if (n.includes("PWF") || (n.includes("PHILLY") && n.includes("WINE"))) return "PWF";
+  if (hasWord("ACF") || n.includes("AUSTIN") || (n.includes("ATLANTA") && n.includes("COFFEE"))) return "ACF";
   return null;
+}
+
+// Map Meta campaign objective -> human-readable campaign type (fixes Issue #6)
+function objectiveToType(obj){
+  if(!obj) return "\u2014";
+  const map = {
+    OUTCOME_TRAFFIC:"Traffic", LINK_CLICKS:"Link Clicks",
+    OUTCOME_AWARENESS:"Awareness", BRAND_AWARENESS:"Awareness", REACH:"Reach",
+    OUTCOME_ENGAGEMENT:"Engagement", POST_ENGAGEMENT:"Engagement", PAGE_LIKES:"Page Likes",
+    OUTCOME_LEADS:"Leads", LEAD_GENERATION:"Leads",
+    OUTCOME_SALES:"Sales", CONVERSIONS:"Conversions", PRODUCT_CATALOG_SALES:"Catalog Sales",
+    OUTCOME_APP_PROMOTION:"App Promotion", APP_INSTALLS:"App Installs",
+    VIDEO_VIEWS:"Video Views", MESSAGES:"Messages", EVENT_RESPONSES:"Event Responses",
+    STORE_VISITS:"Store Visits", LOCAL_AWARENESS:"Local Awareness"
+  };
+  if(map[obj]) return map[obj];
+  return obj.replace(/^OUTCOME_/, "").replace(/_/g," ").toLowerCase().replace(/\b\w/g,c=>c.toUpperCase());
 }
 
 async function fetchMetaAccount(acct) {
@@ -880,13 +910,15 @@ async function fetchMetaAccount(acct) {
           id: c.id,
           name: c.name || ins.campaign_name,
           status: c.status,
+          objective: c.objective,
           event: detectEvent(c.name),
           impressions: parseInt(ins.impressions) || 0,
           clicks: parseInt(ins.clicks) || 0,
           linkClicks: linkClicks ? parseInt(linkClicks.value) : 0,
           spend: parseFloat(ins.spend) || 0,
           cpc: ins.cpc ? parseFloat(ins.cpc) : null,
-          account: acct.label
+          account: acct.label,
+          type: objectiveToType(c.objective)
         };
       })
     };
@@ -901,7 +933,14 @@ async function fetchLiveData() {
     if (statusEl) statusEl.textContent = "Fetching live data from Meta...";
 
     const [acct1, acct2] = await Promise.all(AD_ACCOUNTS.map(fetchMetaAccount));
-    const allCampaigns = [...acct1.campaigns, ...acct2.campaigns];
+    let allCampaigns = [...acct1.campaigns, ...acct2.campaigns];
+
+    // Drop zero-spend / zero-result campaigns to clean up the dashboard (fixes Issue #5)
+    allCampaigns = allCampaigns.filter(c => {
+      const hasSpend   = (c.spend || 0) > 0;
+      const hasResults = (c.linkClicks || 0) > 0 || (c.clicks || 0) > 0 || (c.impressions || 0) > 0;
+      return hasSpend || hasResults;
+    });
 
     if (allCampaigns.length === 0 && (acct1.error || acct2.error)) {
       throw new Error(acct1.error || acct2.error);
@@ -921,7 +960,9 @@ async function fetchLiveData() {
           impressions: c.impressions || 0,
           clicks: c.clicks || 0,
           status: c.status,
-          account: c.account
+          objective: c.objective,
+          // `account` now reflects the real Meta campaign objective, not the ad-account name (fixes Issue #6)
+          account: c.type || objectiveToType(c.objective) || c.account
         });
       });
     }
